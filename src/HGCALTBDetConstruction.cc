@@ -30,7 +30,7 @@ HGCALTBDetConstruction::~HGCALTBDetConstruction() {}
 G4VPhysicalVolume* HGCALTBDetConstruction::Construct()
 {
   G4GDMLParser Parser;
-  Parser.Read("HGCalTB1810Oct.gdml", false);
+  Parser.Read("HGCalTB181Oct.gdml", false);
   auto worldPV = Parser.GetWorldVolume();
 
   // DefineVisAttributes();
