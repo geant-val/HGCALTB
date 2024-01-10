@@ -20,7 +20,6 @@
 #  include "G4RunManager.hh"
 #endif
 // #include "G4RunManagerFactory.hh" //only available from 10.7 on
-#include "G4GDMLParser.hh"
 #include "G4PhysListFactory.hh"
 #include "G4UIExecutive.hh"
 #include "G4UIcommand.hh"
@@ -120,12 +119,8 @@ int main(int argc, char** argv)
   auto physicsList = physListFactory->GetReferencePhysList(custom_pl);
   runManager->SetUserInitialization(physicsList);
 
-  G4GDMLParser parser;
-  parser.Read("TileTB_2B1EB_nobeamline.gdml", false);
-  runManager->SetUserInitialization(new HGCALTBDetConstruction(parser));
+  runManager->SetUserInitialization(new HGCALTBDetConstruction());
 
-  // Classes via ActionInitialization
-  //
   runManager->SetUserInitialization(new HGCALTBActInitialization());
 
   // Visualization manager construction
