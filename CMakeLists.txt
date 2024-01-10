@@ -60,7 +60,7 @@ set_target_properties(HGCALTB PROPERTIES CXX_STANDARD 17)
 # build HGCALTB
 #
 set(HGCALTB_SCRIPTS
-    TBHGCal1810Oct.gdml
+    TBHGCal181Oct.gdml
     icons.mac
     gui.mac
     init_vis.mac
@@ -68,7 +68,7 @@ set(HGCALTB_SCRIPTS
     HGCALTBrun.mac
   )
 
-foreach(_script ${HGCALTBTB_SCRIPTS})
+foreach(_script ${HGCALTB_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
