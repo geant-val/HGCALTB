@@ -14,11 +14,11 @@
 //
 #  include "G4VUserDetectorConstruction.hh"
 
-class ATLTileCalTBDetConstruction : public G4VUserDetectorConstruction
+class HGCALTBDetConstruction : public G4VUserDetectorConstruction
 {
   public:
-    ATLTileCalTBDetConstruction();
-    ~ATLTileCalTBDetConstruction();
+    HGCALTBDetConstruction();
+    ~HGCALTBDetConstruction();
     // virtual methods from base class
     //
     virtual G4VPhysicalVolume* Construct();
