@@ -1,0 +1,4 @@
+/run/initialize
+/gun/particle pi+
+/gun/energy 18 GeV
+/run/beamOn 1000
