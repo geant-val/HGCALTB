@@ -14,10 +14,10 @@
 // Includers from Geant4
 //
 #ifdef G4MULTITHREADED
-#include "G4MTRunManager.hh"
-#include "G4Threading.hh"
+#  include "G4MTRunManager.hh"
+#  include "G4Threading.hh"
 #else
-#include "G4RunManager.hh"
+#  include "G4RunManager.hh"
 #endif
 // #include "G4RunManagerFactory.hh" //only available from 10.7 on
 #include "G4GDMLParser.hh"
@@ -29,8 +29,10 @@
 #include "G4VisExecutive.hh"
 
 // CLI string outputs
-namespace CLIOutputs {
-void PrintHelp() {
+namespace CLIOutputs
+{
+void PrintHelp()
+{
   G4cout << "Usage: ATLTileCalTB [OPTION...]\n\n"
          << "Options:\n"
          << "  -m MACRO        path to macro file to run\n"
@@ -40,25 +42,28 @@ void PrintHelp() {
          << "  -h              print this help and exit\n"
          << G4endl;
 }
-void PrintError() {
+void PrintError()
+{
   G4cerr << "Wrong usage, see 'ATLTileCalTB -h' for more information" << G4endl;
 }
-} // namespace CLIOutputs
+}  // namespace CLIOutputs
 
 // G4err output for PhysListFactory usage error
 //
-namespace PrintPLFactoryUsageError {
-void PLFactoryUsageError() {
+namespace PrintPLFactoryUsageError
+{
+void PLFactoryUsageError()
+{
   G4cerr << "Wrong PLFactory usage: no name for selected PL. " << G4endl;
 }
-} // namespace PrintPLFactoryUsageError
+}  // namespace PrintPLFactoryUsageError
 
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv)
+{
   // CLI variables
   G4String macro;
   G4String session;
-  G4String custom_pl = "FTFP_BERT"; // default physics list
+  G4String custom_pl = "FTFP_BERT";  // default physics list
 #ifdef G4MULTITHREADED
   G4int nThreads = G4Threading::G4GetNumberOfCores();
 #endif
@@ -79,7 +84,8 @@ int main(int argc, char **argv) {
     else if (G4String(argv[i]) == "-h") {
       CLIOutputs::PrintHelp();
       return 0;
-    } else {
+    }
+    else {
       CLIOutputs::PrintError();
       return 1;
     }
@@ -88,8 +94,8 @@ int main(int argc, char **argv) {
   // Activate interaction mode if no macro card is provided and define UI
   // session
   //
-  G4UIExecutive *ui = nullptr;
-  if (!macro.size()) { // if macro card is not passed
+  G4UIExecutive* ui = nullptr;
+  if (!macro.size()) {  // if macro card is not passed
     ui = new G4UIExecutive(argc, argv, session);
   }
 
@@ -107,8 +113,7 @@ int main(int argc, char **argv) {
   // Manadatory Geant4 classes
   //
   auto physListFactory = new G4PhysListFactory();
-  if (!physListFactory->IsReferencePhysList(
-          custom_pl)) { // if custom_pl is not a PLname exit
+  if (!physListFactory->IsReferencePhysList(custom_pl)) {  // if custom_pl is not a PLname exit
     PrintPLFactoryUsageError::PLFactoryUsageError();
     return 1;
   }
@@ -137,12 +142,11 @@ int main(int argc, char **argv) {
   if (!ui) {
     // execute an argument macro file if exist (second parser argument)
     G4String command = "/control/execute ";
-    UImanager->ApplyCommand(
-        "/process/em/verbose 0"); // avoid printing em processes
-    UImanager->ApplyCommand(
-        "/process/had/verbose 0"); // avoid printing had processes
+    UImanager->ApplyCommand("/process/em/verbose 0");  // avoid printing em processes
+    UImanager->ApplyCommand("/process/had/verbose 0");  // avoid printing had processes
     UImanager->ApplyCommand(command + macro);
-  } else {
+  }
+  else {
     UImanager->ApplyCommand("/control/execute init_vis.mac");
     if (ui->IsGUI()) {
       UImanager->ApplyCommand("/control/execute gui.mac");
