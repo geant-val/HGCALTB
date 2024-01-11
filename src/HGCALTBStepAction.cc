@@ -46,15 +46,18 @@ void HGCALTBStepAction::PrintCEEInfo(const G4Step* aStep)
     G4String HGCALSectionName =
       aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(4)->GetName();
     if (HGCALSectionName != "HGCalEE") return;
-    G4cout << "Volume " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
-           << " "
-           << "Mat " << aStep->GetPreStepPoint()->GetMaterial()->GetName() << " "
-           << "StepLength " << aStep->GetStepLength() << " mm "
-           << "cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber() << " "
-           << "GranMother "
-           << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName() << " "
-           << "GranMother cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2)
-           << " " << G4endl;
+    G4cout
+      << "Volume " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() << " "
+      << "Logical "
+      << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName()
+      << " "
+      << "Mat " << aStep->GetPreStepPoint()->GetMaterial()->GetName() << " "
+      << "StepLength " << aStep->GetStepLength() << " mm "
+      << "cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber() << " "
+      << "GranMother " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName()
+      << " "
+      << "GranMother cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2)
+      << " " << G4endl;
   }
 }
 
