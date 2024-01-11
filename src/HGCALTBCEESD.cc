@@ -24,8 +24,8 @@
 // Constructor and de-constructor
 //
 HGCALTBCEESD::HGCALTBCEESD(const G4String& name, const G4String& hitsCollectionName)
-  : G4VSensitiveDetector(name)
-/*fHitsCollection(nullptr)*/ {
+  : G4VSensitiveDetector(name), fHitsCollection(nullptr)
+{
   collectionName.insert(hitsCollectionName);
 }
 
@@ -37,12 +37,18 @@ void HGCALTBCEESD::Initialize(G4HCofThisEvent* hce)
 {
   // Create hits collection
   //
-  // fHitsCollection = new ATLTileCalTBHitsCollection( SensitiveDetectorName, collectionName[0] );
+  fHitsCollection = new HGCALTBCEEHitsCollection(SensitiveDetectorName, collectionName[0]);
 
   // Add this collection in the hits collection of this event
   //
-  // auto hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
-  // hce->AddHitsCollection( hcID, fHitsCollection );
+  auto hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
+  hce->AddHitsCollection(hcID, fHitsCollection);
+
+  // Allocate hits in hit collection
+  //
+  for (std::size_t i = 0; i < 1; i++) {
+    fHitsCollection->insert(new HGCALTBCEEHit());
+  }
 }
 
 // ProcessHits virtual base method

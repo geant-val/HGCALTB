@@ -15,7 +15,7 @@
 
 // Includers form project files
 //
-// #include "HGCALTBCEEHit.hh"
+#  include "HGCALTBCEEHit.hh"
 
 // Forward declaration from Geant4
 //
@@ -35,7 +35,7 @@ class HGCALTBCEESD : public G4VSensitiveDetector
     virtual void EndOfEvent(G4HCofThisEvent* hitCollection);
 
   private:
-    // ATLTileCalTBHitsCollection* fHitsCollection;
+    HGCALTBCEEHitsCollection* fHitsCollection;
 };
 
 #endif  // HGCALTBCEESD_h 1
