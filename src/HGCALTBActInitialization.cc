@@ -28,8 +28,7 @@ void HGCALTBActInitialization::Build() const
 {
   auto PrimaryGenAction = new HGCALTBPrimaryGenAction();
   SetUserAction(PrimaryGenAction);
-  auto StepAction = new HGCALTBStepAction();
-  //SetUserAction(new HGCALTBStepAction());
+  SetUserAction(new HGCALTBStepAction());
 }
 
 //**************************************************

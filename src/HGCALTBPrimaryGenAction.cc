@@ -31,7 +31,7 @@ HGCALTBPrimaryGenAction::HGCALTBPrimaryGenAction()
   auto particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("pi+");
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticleEnergy(10. * GeV);
-  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., -900*cm));
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
 }
 
