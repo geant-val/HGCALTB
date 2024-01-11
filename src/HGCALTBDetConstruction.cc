@@ -10,6 +10,7 @@
 // Includers from project files
 //
 #include "HGCALTBDetConstruction.hh"
+
 #include "HGCALTBCEESD.hh"
 
 // Includers from Geant4
@@ -45,21 +46,20 @@ void HGCALTBDetConstruction::ConstructSDandField()
 {
   // Sensitive detectors
   //
-  auto CEESD = new HGCALTBCEESD( "CEESD", "CEEHitsCollection" );
-  G4SDManager::GetSDMpointer()->AddNewDetector( CEESD );
+  auto CEESD = new HGCALTBCEESD("CEESD", "CEEHitsCollection");
+  G4SDManager::GetSDMpointer()->AddNewDetector(CEESD);
 
-  //Assign to logical volume
+  // Assign to logical volume
   //
   auto LVStore = G4LogicalVolumeStore::GetInstance();
-  for(auto volume : *LVStore) {
-    if( volume->GetName()=="HGCalEECellCoarse" ){
-        G4cout<<"--->Assigning HGCALTBCEESD to logical volume "<< volume->GetName() << G4endl;
-        volume->SetSensitiveDetector( CEESD );
+  for (auto volume : *LVStore) {
+    if (volume->GetName() == "HGCalEECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CEESD);
     }
-    }
+  }
 
   // No fields involved
-
 }
 
 // DefineVisAttributes() private method
