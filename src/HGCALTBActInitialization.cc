@@ -11,6 +11,7 @@
 //
 #include "HGCALTBActInitialization.hh"
 
+#include "HGCALTBEventAction.hh"
 #include "HGCALTBPrimaryGenAction.hh"
 #include "HGCALTBRunAction.hh"
 #include "HGCALTBStepAction.hh"
@@ -34,6 +35,7 @@ void HGCALTBActInitialization::Build() const
   SetUserAction(PrimaryGenAction);
   SetUserAction(new HGCALTBStepAction());
   SetUserAction(new HGCALTBRunAction());
+  SetUserAction(new HGCALTBEventAction());
 }
 
 //**************************************************
