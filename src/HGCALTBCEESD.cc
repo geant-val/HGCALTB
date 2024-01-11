@@ -11,6 +11,8 @@
 //
 #include "HGCALTBCEESD.hh"
 
+#include "HGCALTBConstants.hh"
+
 // Includers from Geant4
 //
 #include "G4HCofThisEvent.hh"
@@ -46,7 +48,7 @@ void HGCALTBCEESD::Initialize(G4HCofThisEvent* hce)
 
   // Allocate hits in hit collection
   //
-  for (std::size_t i = 0; i < 1; i++) {
+  for (G4int i = 0; i < HGCALTBConstants::CEECells; i++) {
     fHitsCollection->insert(new HGCALTBCEEHit());
   }
 }
@@ -55,6 +57,27 @@ void HGCALTBCEESD::Initialize(G4HCofThisEvent* hce)
 //
 G4bool HGCALTBCEESD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
+  // Get CEE layer ID
+  //
+  auto CEELayerID = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2) / 3;
+  if (CEELayerID > HGCALTBConstants::CEELayers) {
+    G4ExceptionDescription msg;
+    msg << "CEE layer copy number greater than " << HGCALTBConstants::CEELayers;
+    G4Exception("HGCALTBCEESD::ProcessHits()", "MyCode0004", FatalException, msg);
+  }
+
+  // Access the corresponding hit
+  //
+  auto CellID = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(0)
+                - HGCALTBConstants::CEECellMinCpNo;
+  if (CellID > HGCALTBConstants::CEECells) {
+    G4ExceptionDescription msg;
+    msg << "CEE cell copy number greater than " << HGCALTBConstants::CEECells;
+    G4Exception("HGCALTBCEESD::ProcessHits()", "MyCode0004", FatalException, msg);
+  }
+  auto hit = (*fHitsCollection)[CEELayerID];
+  hit->AddCellEdep(CellID, aStep->GetTotalEnergyDeposit());
+
   return true;
 }
 

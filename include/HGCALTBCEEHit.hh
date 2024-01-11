@@ -9,6 +9,10 @@
 #ifndef HGCALTBCEEHit_h
 #  define HGCALTBCEEHit_h 1
 
+// Includers from project files
+//
+#  include "HGCALTBConstants.hh"
+
 // Includers from Geant4
 //
 #  include "G4THitsCollection.hh"
@@ -35,29 +39,17 @@ class HGCALTBCEEHit : public G4VHit
     virtual void Draw() {}
     virtual void Print(){};
 
-    // Methods to handle data
-    //
-    void AddEdep(G4double dEdep);
-
-    // Get methods
-    //
-    G4double GetEdep() const;
+    void AddCellEdep(G4int CellID, G4double Edep);
 
   private:
-    // Total energy deposition in the CEE layer
-    G4double fEdep;
+    std::array<G4double, HGCALTBConstants::CEECells> fCEESignals;
 };
 
 using HGCALTBCEEHitsCollection = G4THitsCollection<HGCALTBCEEHit>;
 
-inline void HGCALTBCEEHit::AddEdep(G4double dEdep)
+inline void HGCALTBCEEHit::AddCellEdep(G4int CellID, G4double Edep)
 {
-  fEdep += dEdep;
-}
-
-inline G4double HGCALTBCEEHit::GetEdep() const
-{
-  return fEdep;
+  fCEESignals[CellID] += Edep;
 }
 
 #endif  // HGCALTBCEEHit_h 1

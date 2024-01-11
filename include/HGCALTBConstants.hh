@@ -32,7 +32,7 @@ constexpr G4int CEECellMinCpNo = 2003;
 constexpr G4int CEECellMaxCpNo = 2129;
 
 // CEE (small) silicon cells per big hexagon (layer)
-constexpr G4int CEECells = CEECellMinCpNo - CEECellMaxCpNo;  // 126
+constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 126
 
 }  // namespace HGCALTBConstants
 

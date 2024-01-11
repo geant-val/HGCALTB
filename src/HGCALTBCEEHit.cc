@@ -15,20 +15,20 @@
 
 // Constructor and de-constructor
 //
-HGCALTBCEEHit::HGCALTBCEEHit() : G4VHit(), fEdep(0.) {}
+HGCALTBCEEHit::HGCALTBCEEHit() : G4VHit(), fCEESignals({}) {}
 
 HGCALTBCEEHit::~HGCALTBCEEHit() {}
 
 HGCALTBCEEHit::HGCALTBCEEHit(const HGCALTBCEEHit& right) : G4VHit()
 {
-  fEdep = right.fEdep;
+  fCEESignals = right.fCEESignals;
 }
 
 // Operator = definition
 //
 const HGCALTBCEEHit& HGCALTBCEEHit::operator=(const HGCALTBCEEHit& right)
 {
-  fEdep = right.fEdep;
+  fCEESignals = right.fCEESignals;
 
   return *this;
 }
