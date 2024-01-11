@@ -32,10 +32,11 @@ void HGCALTBActInitialization::BuildForMaster() const
 void HGCALTBActInitialization::Build() const
 {
   auto PrimaryGenAction = new HGCALTBPrimaryGenAction();
+  auto EventAction = new HGCALTBEventAction();
   SetUserAction(PrimaryGenAction);
-  SetUserAction(new HGCALTBStepAction());
+  SetUserAction(new HGCALTBStepAction(EventAction));
   SetUserAction(new HGCALTBRunAction());
-  SetUserAction(new HGCALTBEventAction());
+  SetUserAction(EventAction);
 }
 
 //**************************************************

@@ -15,9 +15,9 @@
 //
 HGCALTBStepAction::HGCALTBStepAction() : G4UserSteppingAction() {}
 
-// HGCALTBStepAction::HGCALTBStepAction(HGCALTBEventAction* EventAction)
-//     : G4UserSteppingAction(),
-//       fEventAction( EventAction ){}
+HGCALTBStepAction::HGCALTBStepAction(HGCALTBEventAction* EventAction)
+  : G4UserSteppingAction(), fEventAction(EventAction)
+{}
 
 HGCALTBStepAction::~HGCALTBStepAction() {}
 
@@ -27,7 +27,11 @@ void HGCALTBStepAction::UserSteppingAction(const G4Step* aStep)
 {
   // Print CEE info for steps in silicon
   //
-  PrintCEEInfo(aStep);
+  // PrintCEEInfo(aStep);
+
+  // Add edep at each step
+  //
+  fEventAction->Addedep(aStep->GetTotalEnergyDeposit());
 }
 
 void HGCALTBStepAction::PrintCEEInfo(const G4Step* aStep)
