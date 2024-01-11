@@ -23,6 +23,35 @@ HGCALTBStepAction::~HGCALTBStepAction() {}
 
 // UserSteppingaction() virtual method from base class
 //
-void HGCALTBStepAction::UserSteppingAction(const G4Step* aStep) {}
+void HGCALTBStepAction::UserSteppingAction(const G4Step* aStep)
+{
+  // Print CEE info for steps in silicon
+  //
+  PrintCEEInfo(aStep);
+}
+
+void HGCALTBStepAction::PrintCEEInfo(const G4Step* aStep)
+{
+  // Print information from steps in CEE active (silicon) elements
+  // NB: using only silicon cells inside the main hexagon, i.e. "HGCalEECellCoarse"
+  //     not using half silicon cells outside the main hexagon, i.e. "HGCalEECellCoarseHalf"
+  // NB: The parent volume with useful copynumber for layer information is the granmother
+  //
+  if (aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() == "HGCalEECellCoarse")
+  {
+    G4String HGCALSectionName =
+      aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(4)->GetName();
+    if (HGCALSectionName != "HGCalEE") return;
+    G4cout << "Volume " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
+           << " "
+           << "Mat " << aStep->GetPreStepPoint()->GetMaterial()->GetName() << " "
+           << "StepLength " << aStep->GetStepLength() << " mm "
+           << "cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber() << " "
+           << "GranMother "
+           << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName() << " "
+           << "GranMother cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2)
+           << " " << G4endl;
+  }
+}
 
 //**************************************************
