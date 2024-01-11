@@ -46,7 +46,7 @@ void HGCALTBDetConstruction::ConstructSDandField()
 {
   // Sensitive detectors
   //
-  auto CEESD = new HGCALTBCEESD("CEESD", "CEEHitsCollection");
+  auto CEESD = new HGCALTBCEESD("CEESD");
   G4SDManager::GetSDMpointer()->AddNewDetector(CEESD);
 
   // Assign to logical volume

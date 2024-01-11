@@ -23,12 +23,14 @@
 #include "G4ThreeVector.hh"
 #include "G4ios.hh"
 
+const G4String HGCALTBCEESD::fCEEHitsCollectionName = "CEEHitsCollectionName";
+
 // Constructor and de-constructor
 //
-HGCALTBCEESD::HGCALTBCEESD(const G4String& name, const G4String& hitsCollectionName)
+HGCALTBCEESD::HGCALTBCEESD(const G4String& name)
   : G4VSensitiveDetector(name), fHitsCollection(nullptr)
 {
-  collectionName.insert(hitsCollectionName);
+  collectionName.insert(fCEEHitsCollectionName);
 }
 
 HGCALTBCEESD::~HGCALTBCEESD() {}

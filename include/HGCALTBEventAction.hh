@@ -18,6 +18,10 @@
 #  include "G4UserEventAction.hh"
 #  include "globals.hh"
 
+// Includers from project files
+//
+#  include "HGCALTBCEEHit.hh"
+
 class HGCALTBEventAction : public G4UserEventAction
 {
   public:
@@ -31,6 +35,7 @@ class HGCALTBEventAction : public G4UserEventAction
     void Addedep(G4double stepedep);
 
   private:
+    HGCALTBCEEHitsCollection* GetHitsCollection(G4int hcID, const G4Event* event) const;
     G4double edep;  // energy deposited in every volume
 };
 
