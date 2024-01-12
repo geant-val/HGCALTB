@@ -34,6 +34,19 @@ constexpr G4int CEECellMaxCpNo = 2129;
 // CEE (small) silicon cells per big hexagon (layer)
 constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 126
 
+// HGCALCHE
+//
+
+// CHE longitudinal layers
+constexpr G4int CHELayers = 12;
+
+// CEE copynumbers for HGCalHECellCoarse (exluding HGCALHECellCoarseHalf)
+constexpr G4int CHECellMinCpNo = 2003;
+constexpr G4int CHECellMaxCpNo = 2129;
+
+// CHE (small) silicon cells per big hexagon (layer)
+constexpr G4int CHECells = CHECellMaxCpNo - CHECellMinCpNo;  // 126
+
 }  // namespace HGCALTBConstants
 
 #endif  // HGCALTBConstants_h 1
