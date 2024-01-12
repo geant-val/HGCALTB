@@ -50,6 +50,10 @@ constexpr G4int CHEHexLayer = 7;
 // CHE (small) silicon cells per big hexagon (layer)
 constexpr G4int CHECells = CHEHexLayer * (CHECellMaxCpNo - CHECellMinCpNo);  // 7*126=882
 
+// MIP calibration
+//
+constexpr G4double MIPSilicon = 0.085;  // MeV
+
 }  // namespace HGCALTBConstants
 
 #endif  // HGCALTBConstants_h 1
