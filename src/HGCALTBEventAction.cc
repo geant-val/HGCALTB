@@ -123,8 +123,14 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
 
   // Accumulate statistics
   //
+  auto CEETot = std::accumulate(fCEELayerSignals.begin(), fCEELayerSignals.end(), 0.);
+  auto CHETot = std::accumulate(fCHELayerSignals.begin(), fCHELayerSignals.end(), 0.);
+  auto HGCALTot = CEETot + CHETot;
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillNtupleDColumn(0, edep);
+  analysisManager->FillNtupleDColumn(1, CEETot);
+  analysisManager->FillNtupleDColumn(2, CHETot);
+  analysisManager->FillNtupleDColumn(3, HGCALTot);
   analysisManager->AddNtupleRow();
 }
 
