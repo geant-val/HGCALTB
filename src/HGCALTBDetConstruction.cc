@@ -12,6 +12,7 @@
 #include "HGCALTBDetConstruction.hh"
 
 #include "HGCALTBCEESD.hh"
+#include "HGCALTBCHESD.hh"
 
 // Includers from Geant4
 //
@@ -48,6 +49,8 @@ void HGCALTBDetConstruction::ConstructSDandField()
   //
   auto CEESD = new HGCALTBCEESD("CEESD");
   G4SDManager::GetSDMpointer()->AddNewDetector(CEESD);
+  auto CHESD = new HGCALTBCHESD("CHESD");
+  G4SDManager::GetSDMpointer()->AddNewDetector(CHESD);
 
   // Assign to logical volume
   //
@@ -56,6 +59,10 @@ void HGCALTBDetConstruction::ConstructSDandField()
     if (volume->GetName() == "HGCalEECellCoarse") {
       G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CEESD);
+    }
+    if (volume->GetName() == "HGCalHECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CHESD);
     }
   }
 

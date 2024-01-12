@@ -12,6 +12,7 @@
 #include "HGCALTBEventAction.hh"
 
 #include "HGCALTBCEESD.hh"
+#include "HGCALTBCHESD.hh"
 #include "HGCALTBRunAction.hh"
 
 // Includers from Geant4
@@ -36,6 +37,7 @@
 HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.)
 {
   fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
+  fCHELayerSignals = std::vector<G4double>(HGCALTBConstants::CHELayers, 0.);
 }
 
 HGCALTBEventAction::~HGCALTBEventAction() {}
@@ -50,15 +52,35 @@ void HGCALTBEventAction::BeginOfEventAction(const G4Event*)
   for (auto& value : fCEELayerSignals) {
     value = 0.;
   }
+  for (auto& value : fCHELayerSignals) {
+    value = 0.;
+  }
 }
 
-// GetHitsCollection method()
+// GetCEEHitsCollection method()
 //
-HGCALTBCEEHitsCollection* HGCALTBEventAction::GetHitsCollection(G4int hcID,
-                                                                const G4Event* event) const
+HGCALTBCEEHitsCollection* HGCALTBEventAction::GetCEEHitsCollection(G4int hcID,
+                                                                   const G4Event* event) const
 {
   auto hitsCollection =
     static_cast<HGCALTBCEEHitsCollection*>(event->GetHCofThisEvent()->GetHC(hcID));
+
+  if (!hitsCollection) {
+    G4ExceptionDescription msg;
+    msg << "Cannot access hitsCollection ID " << hcID;
+    G4Exception("HGCALTBEventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+  }
+
+  return hitsCollection;
+}
+
+// GetCEEHitsCollection method()
+//
+HGCALTBCHEHitsCollection* HGCALTBEventAction::GetCHEHitsCollection(G4int hcID,
+                                                                   const G4Event* event) const
+{
+  auto hitsCollection =
+    static_cast<HGCALTBCHEHitsCollection*>(event->GetHCofThisEvent()->GetHC(hcID));
 
   if (!hitsCollection) {
     G4ExceptionDescription msg;
@@ -79,7 +101,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   //
   auto CEEHCID =
     G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBCEESD::fCEEHitsCollectionName);
-  HGCALTBCEEHitsCollection* CEEHC = GetHitsCollection(CEEHCID, event);
+  HGCALTBCEEHitsCollection* CEEHC = GetCEEHitsCollection(CEEHCID, event);
 
   for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
     auto CEESignals = (*CEEHC)[i]->GetCEESignals();
@@ -87,7 +109,19 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     fCEELayerSignals[i] = CEELayerSignal;
   }
 
-  // Accumulate statistics for global variables
+  // CHE Hits
+  //
+  auto CHEHCID =
+    G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBCHESD::fCHEHitsCollectionName);
+  HGCALTBCHEHitsCollection* CHEHC = GetCHEHitsCollection(CHEHCID, event);
+
+  for (std::size_t i = 0; i < HGCALTBConstants::CHELayers; i++) {
+    auto CHESignals = (*CHEHC)[i]->GetCHESignals();
+    G4double CHELayerSignal = std::accumulate(CHESignals.begin(), CHESignals.end(), 0.);
+    fCHELayerSignals[i] = CHELayerSignal;
+  }
+
+  // Accumulate statistics
   //
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillNtupleDColumn(0, edep);

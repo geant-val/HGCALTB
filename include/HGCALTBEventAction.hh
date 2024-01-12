@@ -21,6 +21,7 @@
 // Includers from project files
 //
 #  include "HGCALTBCEEHit.hh"
+#  include "HGCALTBCHEHit.hh"
 #  include "HGCALTBConstants.hh"
 
 class HGCALTBEventAction : public G4UserEventAction
@@ -35,11 +36,14 @@ class HGCALTBEventAction : public G4UserEventAction
 
     void Addedep(G4double stepedep);
     std::vector<G4double>& GetCEESignals() { return fCEELayerSignals; };
+    std::vector<G4double>& GetCHESignals() { return fCHELayerSignals; };
 
   private:
-    HGCALTBCEEHitsCollection* GetHitsCollection(G4int hcID, const G4Event* event) const;
+    HGCALTBCEEHitsCollection* GetCEEHitsCollection(G4int hcID, const G4Event* event) const;
+    HGCALTBCHEHitsCollection* GetCHEHitsCollection(G4int hcID, const G4Event* event) const;
     G4double edep;  // energy deposited in every volume
     std::vector<G4double> fCEELayerSignals;  // signals per CEE layer
+    std::vector<G4double> fCHELayerSignals;  // signals per CHE layer
 };
 
 inline void HGCALTBEventAction::Addedep(G4double stepedep)

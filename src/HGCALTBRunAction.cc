@@ -39,6 +39,7 @@ HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction)
   analysisManager->CreateNtuple("HGCALTBout", "HGCALTBoutput");
   analysisManager->CreateNtupleDColumn("edep");
   analysisManager->CreateNtupleDColumn("CEESignals", fEventAction->GetCEESignals());
+  analysisManager->CreateNtupleDColumn("CHESignals", fEventAction->GetCHESignals());
   analysisManager->FinishNtuple();
 }
 

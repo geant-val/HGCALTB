@@ -28,7 +28,7 @@ void HGCALTBStepAction::UserSteppingAction(const G4Step* aStep)
   // Print CEE info for steps in silicon
   //
   // PrintCEEInfo(aStep);
-  PrintCHEInfo(aStep);
+  // PrintCHEInfo(aStep);
 
   // Add edep at each step
   //
