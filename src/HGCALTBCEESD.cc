@@ -50,7 +50,7 @@ void HGCALTBCEESD::Initialize(G4HCofThisEvent* hce)
 
   // Allocate hits in hit collection
   //
-  for (G4int i = 0; i < HGCALTBConstants::CEECells; i++) {
+  for (G4int i = 0; i < HGCALTBConstants::CEELayers; i++) {
     fHitsCollection->insert(new HGCALTBCEEHit());
   }
 }
@@ -61,8 +61,8 @@ G4bool HGCALTBCEESD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   // Get CEE layer ID
   //
-  auto CEELayerID = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2) / 3;
-  if (CEELayerID > HGCALTBConstants::CEELayers) {
+  auto CEELayerID = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2) - 1) / 3;
+  if (CEELayerID >= HGCALTBConstants::CEELayers || CEELayerID < 0) {
     G4ExceptionDescription msg;
     msg << "CEE layer copy number greater than " << HGCALTBConstants::CEELayers;
     G4Exception("HGCALTBCEESD::ProcessHits()", "MyCode0004", FatalException, msg);
@@ -72,7 +72,7 @@ G4bool HGCALTBCEESD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   //
   auto CellID = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(0)
                 - HGCALTBConstants::CEECellMinCpNo;
-  if (CellID > HGCALTBConstants::CEECells) {
+  if (CellID > HGCALTBConstants::CEECells || CellID < 0) {
     G4ExceptionDescription msg;
     msg << "CEE cell copy number greater than " << HGCALTBConstants::CEECells;
     G4Exception("HGCALTBCEESD::ProcessHits()", "MyCode0004", FatalException, msg);
