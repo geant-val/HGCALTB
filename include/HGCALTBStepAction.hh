@@ -17,20 +17,22 @@
 
 // Includers from project files
 //
-// #include "HGCALTBEventAction.hh"
+#  include "HGCALTBEventAction.hh"
 
 class HGCALTBStepAction : public G4UserSteppingAction
 {
   public:
     HGCALTBStepAction();
-    // HGCALTBStepAction( ATLTileCalTBEventAction* EvtAction );
+    HGCALTBStepAction(HGCALTBEventAction* EvtAction);
     virtual ~HGCALTBStepAction();
 
     // virtual methods from base class
     virtual void UserSteppingAction(const G4Step* aStep);
 
   private:
-    // HGCALTBEventAction* fEventAction;
+    HGCALTBEventAction* fEventAction;
+    void PrintCEEInfo(const G4Step* aStep);
+    void PrintCHEInfo(const G4Step* aStep);
 };
 
 #endif  // HGCALTBStepAction_h 1

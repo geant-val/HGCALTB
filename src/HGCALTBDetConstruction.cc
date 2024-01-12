@@ -11,6 +11,9 @@
 //
 #include "HGCALTBDetConstruction.hh"
 
+#include "HGCALTBCEESD.hh"
+#include "HGCALTBCHESD.hh"
+
 // Includers from Geant4
 //
 #include "G4GDMLParser.hh"
@@ -44,6 +47,24 @@ void HGCALTBDetConstruction::ConstructSDandField()
 {
   // Sensitive detectors
   //
+  auto CEESD = new HGCALTBCEESD("CEESD");
+  G4SDManager::GetSDMpointer()->AddNewDetector(CEESD);
+  auto CHESD = new HGCALTBCHESD("CHESD");
+  G4SDManager::GetSDMpointer()->AddNewDetector(CHESD);
+
+  // Assign to logical volume
+  //
+  auto LVStore = G4LogicalVolumeStore::GetInstance();
+  for (auto volume : *LVStore) {
+    if (volume->GetName() == "HGCalEECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CEESD);
+    }
+    if (volume->GetName() == "HGCalHECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CHESD);
+    }
+  }
 
   // No fields involved
 }

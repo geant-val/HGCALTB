@@ -137,8 +137,6 @@ int main(int argc, char** argv)
   if (!ui) {
     // execute an argument macro file if exist (second parser argument)
     G4String command = "/control/execute ";
-    UImanager->ApplyCommand("/process/em/verbose 0");  // avoid printing em processes
-    UImanager->ApplyCommand("/process/had/verbose 0");  // avoid printing had processes
     UImanager->ApplyCommand(command + macro);
   }
   else {

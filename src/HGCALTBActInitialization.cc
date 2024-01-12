@@ -11,7 +11,9 @@
 //
 #include "HGCALTBActInitialization.hh"
 
+#include "HGCALTBEventAction.hh"
 #include "HGCALTBPrimaryGenAction.hh"
+#include "HGCALTBRunAction.hh"
 #include "HGCALTBStepAction.hh"
 
 // Constructor and de-constructor
@@ -22,14 +24,20 @@ HGCALTBActInitialization::~HGCALTBActInitialization() {}
 
 // Build() and BuildForMaster() virtual methods
 //
-void HGCALTBActInitialization::BuildForMaster() const {}
+void HGCALTBActInitialization::BuildForMaster() const
+{
+  auto EventAction = new HGCALTBEventAction();
+  SetUserAction(new HGCALTBRunAction(EventAction));
+}
 
 void HGCALTBActInitialization::Build() const
 {
   auto PrimaryGenAction = new HGCALTBPrimaryGenAction();
+  auto EventAction = new HGCALTBEventAction();
   SetUserAction(PrimaryGenAction);
-  auto StepAction = new HGCALTBStepAction();
-  //SetUserAction(new HGCALTBStepAction());
+  SetUserAction(new HGCALTBStepAction(EventAction));
+  SetUserAction(new HGCALTBRunAction(EventAction));
+  SetUserAction(EventAction);
 }
 
 //**************************************************

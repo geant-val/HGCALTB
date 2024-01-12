@@ -1,0 +1,78 @@
+//**************************************************
+// \file HGCALTBRunAction.cc
+// \brief: Implementation of HGCALTBRunAction class
+// \author: Lorenzo Pezzotti (CERN EP-SFT-sim)
+//          @lopezzot
+// \start date: 11 January 2024
+//**************************************************
+
+// Includers from project files
+//
+#include "HGCALTBRunAction.hh"
+
+// Includers from Geant4
+//
+#include "G4Run.hh"
+#include "G4RunManager.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UnitsTable.hh"
+#include "G4Version.hh"
+#if G4VERSION_NUMBER < 1100
+#  include "g4root.hh"
+#else
+#  include "G4AnalysisManager.hh"
+#endif
+#include <string>
+
+// Constructor and de-constructor
+//
+HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction)
+  : G4UserRunAction(), fEventAction(eventAction)
+{
+  G4RunManager::GetRunManager()->SetPrintProgress(1);  // print each event number
+
+  // Instantiate analysis manager
+  auto analysisManager = G4AnalysisManager::Instance();  // using ROOT
+  analysisManager->SetVerboseLevel(1);
+  analysisManager->SetNtupleMerging(1);
+
+  analysisManager->CreateNtuple("HGCALTBout", "HGCALTBoutput");
+  analysisManager->CreateNtupleDColumn("edep");
+  analysisManager->CreateNtupleDColumn("CEESignals", fEventAction->GetCEESignals());
+  analysisManager->CreateNtupleDColumn("CHESignals", fEventAction->GetCHESignals());
+  analysisManager->FinishNtuple();
+}
+
+// Define deconstructor
+//
+HGCALTBRunAction::~HGCALTBRunAction()
+{
+#if G4VERSION_NUMBER < 1100
+  delete G4AnalysisManager::Instance();  // not needed for G4 v11 and up
+#endif
+}
+
+// Define BeginOfRunAction() and EndOfRunAction() methods
+//
+void HGCALTBRunAction::BeginOfRunAction(const G4Run* Run)
+{
+  // Inform RunManager to save random seeds
+  //
+  // G4RunManager::GetRunManager()->SetRandomNumberStore( true );
+
+  auto analysisManager = G4AnalysisManager::Instance();
+
+  std::string runnumber = std::to_string(Run->GetRunID());
+  G4String outputfile = "HGCALTBout_Run" + runnumber + ".root";
+  analysisManager->OpenFile(outputfile);
+}
+
+void HGCALTBRunAction::EndOfRunAction(const G4Run*)
+{
+  auto analysisManager = G4AnalysisManager::Instance();
+
+  analysisManager->Write();
+  analysisManager->CloseFile();
+}
+
+//**************************************************
