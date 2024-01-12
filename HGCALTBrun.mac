@@ -2,6 +2,6 @@
 /process/had/verbose 0
 /run/initialize
 /run/printProgress 1
-/gun/particle pi+
+/gun/particle pi-
 /gun/energy 10 GeV
 /run/beamOn 1000
