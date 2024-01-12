@@ -16,18 +16,23 @@
 #  include "G4UserRunAction.hh"
 #  include "globals.hh"
 
-class ATLHECTBEventAction;
+// Includers from project files
+//
+#  include "HGCALTBEventAction.hh"
 
 class G4Run;
 
 class HGCALTBRunAction : public G4UserRunAction
 {
   public:
-    HGCALTBRunAction();
+    HGCALTBRunAction(HGCALTBEventAction* eventAction);
     virtual ~HGCALTBRunAction();
     // virtual methods from base class
     virtual void BeginOfRunAction(const G4Run*);
     virtual void EndOfRunAction(const G4Run*);
+
+  private:
+    HGCALTBEventAction* fEventAction;
 };
 
 #endif  // HGCALTBRunAction_h 1

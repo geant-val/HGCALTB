@@ -26,7 +26,8 @@
 
 // Constructor and de-constructor
 //
-HGCALTBRunAction::HGCALTBRunAction() : G4UserRunAction()
+HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction)
+  : G4UserRunAction(), fEventAction(eventAction)
 {
   G4RunManager::GetRunManager()->SetPrintProgress(1);  // print each event number
 
@@ -37,6 +38,7 @@ HGCALTBRunAction::HGCALTBRunAction() : G4UserRunAction()
 
   analysisManager->CreateNtuple("HGCALTBout", "HGCALTBoutput");
   analysisManager->CreateNtupleDColumn("edep");
+  analysisManager->CreateNtupleDColumn("CEESignals", fEventAction->GetCEESignals());
   analysisManager->FinishNtuple();
 }
 

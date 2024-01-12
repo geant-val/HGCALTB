@@ -26,7 +26,8 @@ HGCALTBActInitialization::~HGCALTBActInitialization() {}
 //
 void HGCALTBActInitialization::BuildForMaster() const
 {
-  SetUserAction(new HGCALTBRunAction());
+  auto EventAction = new HGCALTBEventAction();
+  SetUserAction(new HGCALTBRunAction(EventAction));
 }
 
 void HGCALTBActInitialization::Build() const
@@ -35,7 +36,7 @@ void HGCALTBActInitialization::Build() const
   auto EventAction = new HGCALTBEventAction();
   SetUserAction(PrimaryGenAction);
   SetUserAction(new HGCALTBStepAction(EventAction));
-  SetUserAction(new HGCALTBRunAction());
+  SetUserAction(new HGCALTBRunAction(EventAction));
   SetUserAction(EventAction);
 }
 

@@ -27,9 +27,16 @@
 #endif
 #include "G4SDManager.hh"
 
+// Includers from std
+//
+#include <numeric>
+
 // constructor and de-constructor
 //
-HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.) {}
+HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.)
+{
+  fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
+}
 
 HGCALTBEventAction::~HGCALTBEventAction() {}
 
@@ -40,6 +47,9 @@ void HGCALTBEventAction::BeginOfEventAction(const G4Event*)
   // Initialize variables per event
   //
   edep = 0.;
+  for (auto& value : fCEELayerSignals) {
+    value = 0.;
+  }
 }
 
 // GetHitsCollection method()
@@ -65,15 +75,23 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   //
   // auto rndseed = G4RunManager::GetRunManager()->GetRandomNumberStatusForThisEvent();
 
-  // Accumulate statistics
+  // CEE Hits
+  //
+  auto CEEHCID =
+    G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBCEESD::fCEEHitsCollectionName);
+  HGCALTBCEEHitsCollection* CEEHC = GetHitsCollection(CEEHCID, event);
+
+  for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
+    auto CEESignals = (*CEEHC)[i]->GetCEESignals();
+    G4double CEELayerSignal = std::accumulate(CEESignals.begin(), CEESignals.end(), 0.);
+    fCEELayerSignals[i] = CEELayerSignal;
+  }
+
+  // Accumulate statistics for global variables
   //
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillNtupleDColumn(0, edep);
   analysisManager->AddNtupleRow();
-
-  auto CEEHCID =
-    G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBCEESD::fCEEHitsCollectionName);
-  HGCALTBCEEHitsCollection* CEEHC = GetHitsCollection(CEEHCID, event);
 }
 
 //**************************************************

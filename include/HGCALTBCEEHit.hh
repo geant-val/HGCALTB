@@ -41,6 +41,10 @@ class HGCALTBCEEHit : public G4VHit
 
     void AddCellEdep(G4int CellID, G4double Edep);
 
+    // return a copy of the fCEESignals array
+    //
+    std::array<G4double, HGCALTBConstants::CEECells> GetCEESignals() const { return fCEESignals; }
+
   private:
     std::array<G4double, HGCALTBConstants::CEECells> fCEESignals;
 };
