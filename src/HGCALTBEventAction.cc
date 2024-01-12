@@ -106,7 +106,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
     auto CEESignals = (*CEEHC)[i]->GetCEESignals();
     G4double CEELayerSignal = std::accumulate(CEESignals.begin(), CEESignals.end(), 0.);
-    fCEELayerSignals[i] = CEELayerSignal;
+    fCEELayerSignals[i] = CEELayerSignal / HGCALTBConstants::MIPSilicon;
   }
 
   // CHE Hits
@@ -118,7 +118,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   for (std::size_t i = 0; i < HGCALTBConstants::CHELayers; i++) {
     auto CHESignals = (*CHEHC)[i]->GetCHESignals();
     G4double CHELayerSignal = std::accumulate(CHESignals.begin(), CHESignals.end(), 0.);
-    fCHELayerSignals[i] = CHELayerSignal;
+    fCHELayerSignals[i] = CHELayerSignal / HGCALTBConstants::MIPSilicon;
   }
 
   // Accumulate statistics
