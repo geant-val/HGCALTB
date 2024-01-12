@@ -29,6 +29,7 @@ void HGCALTBStepAction::UserSteppingAction(const G4Step* aStep)
   //
   // PrintCEEInfo(aStep);
   // PrintCHEInfo(aStep);
+  // PrintAHCALInfo(aStep);
 
   // Add edep at each step
   //
@@ -88,6 +89,32 @@ void HGCALTBStepAction::PrintCHEInfo(const G4Step* aStep)
       << "GranMother " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName()
       << " "
       << "GranMother cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2)
+      << " " << G4endl;
+  }
+}
+
+void HGCALTBStepAction::PrintAHCALInfo(const G4Step* aStep)
+{
+  // Print information from steps in AHCAL active (plastic) elements
+  // NB: using only plastic cells
+  // NB: The parent volume with useful copynumber for layer information is the mother
+  //
+  if (aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName()
+      == "AHcalTileSensitive")
+  {
+    G4String HGCALSectionName =
+      aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(2)->GetName();
+    if (HGCALSectionName != "HGCalAH") return;
+    G4cout
+      << "Volume " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName() << " "
+      << "Logical "
+      << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName()
+      << " "
+      << "Mat " << aStep->GetPreStepPoint()->GetMaterial()->GetName() << " "
+      << "StepLength " << aStep->GetStepLength() << " mm "
+      << "cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber() << " "
+      << "Mother " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume(1)->GetName() << " "
+      << "Mother cpNo " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1) << " "
       << " " << G4endl;
   }
 }

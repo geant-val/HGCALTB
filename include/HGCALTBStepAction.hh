@@ -33,6 +33,7 @@ class HGCALTBStepAction : public G4UserSteppingAction
     HGCALTBEventAction* fEventAction;
     void PrintCEEInfo(const G4Step* aStep);
     void PrintCHEInfo(const G4Step* aStep);
+    void PrintAHCALInfo(const G4Step* aStep);
 };
 
 #endif  // HGCALTBStepAction_h 1
