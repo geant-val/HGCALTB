@@ -18,7 +18,7 @@
 #  include "HGCALTBAHHit.hh"
 #  include "HGCALTBConstants.hh"
 
-#  define DEBUGAHCALSD
+// #  define DEBUGAHCALSD
 
 // Forward declaration from Geant4
 //
@@ -66,7 +66,7 @@ inline G4int HGCALTBAHCALSD::MapTileCpNo(G4int cpno) const
   .
   101201..101212
 
-  quadrant 4 (up-left):
+  quadrant 4 (down-left):
   110101..110112
   .
   .
@@ -107,7 +107,7 @@ inline G4int HGCALTBAHCALSD::MapTileCpNo(G4int cpno) const
 
   // Find column (1..12)
   G4int column = 99;
-  column = cpno - row * 100;
+  column = cpno - (row + 1) * 100;
   if (column < 1 || row > HGCALTBConstants::AHCALcolumn / 2) {
     G4ExceptionDescription msg;
     msg << "Wrong AHCAL column in quadrant 1:" << column;
@@ -127,7 +127,7 @@ inline G4int HGCALTBAHCALSD::MapTileCpNo(G4int cpno) const
 
 #  ifdef DEBUGAHCALSD
   G4cout << "cpno " << cpno << " quadrant " << quadrant << " column " << column << " row " << row
-         << G4endl;
+         << " newcpno " << newcpno << G4endl;
 #  endif
 
   return newcpno;

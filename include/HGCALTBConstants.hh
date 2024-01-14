@@ -56,7 +56,12 @@ constexpr G4int CHECells = CHEHexLayer * (CHECellMaxCpNo - CHECellMinCpNo);  // 
 // AHCAL row and column plastic tiles
 constexpr G4int AHCALrow = 24;
 constexpr G4int AHCALcolumn = 24;
+
+// AHCAL tiles per layer
 constexpr G4int AHCALtileperlayer = AHCALrow * AHCALcolumn;
+
+// AHCAL layers
+constexpr G4int AHCALLayers = 39;
 
 // MIP calibration
 //
