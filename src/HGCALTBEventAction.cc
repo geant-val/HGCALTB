@@ -149,10 +149,22 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBAHCALSD::fAHCALHitsCollectionName);
   HGCALTBAHCALHitsCollection* AHCALHC = GetAHCALHitsCollection(AHCALHCID, event);
 
+  // lambda to apply calibration and 0.5 MIP cut over AHCAL cells
+  auto ApplyAHCut = [MIPTile = HGCALTBConstants::MIPTile,
+                     AHThreshold = HGCALTBConstants::AHCALThreshold](G4double partialsum,
+                                                                     G4double signal) -> G4double {
+    auto calibsignal = signal * MIPTile;
+    if (calibsignal > AHThreshold)
+      return partialsum + calibsignal;
+    else
+      return partialsum;
+  };
+
   for (std::size_t i = 0; i < HGCALTBConstants::AHCALLayers; i++) {
     auto AHCALSignals = (*AHCALHC)[i]->GetAHSignals();
-    G4double AHCALLayerSignal = std::accumulate(AHCALSignals.begin(), AHCALSignals.end(), 0.);
-    fAHCALLayerSignals[i] = AHCALLayerSignal / HGCALTBConstants::MIPTile;  // MIP calibration
+    G4double AHCALLayerSignal =
+      std::accumulate(AHCALSignals.begin(), AHCALSignals.end(), 0., ApplyAHCut);
+    fAHCALLayerSignals[i] = AHCALLayerSignal;
   }
 
   // Accumulate statistics
