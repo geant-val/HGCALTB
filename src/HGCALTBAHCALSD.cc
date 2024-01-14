@@ -26,8 +26,7 @@ const G4String HGCALTBAHCALSD::fAHCALHitsCollectionName = "AHCALHitsCollectionNa
 // Constructor and de-constructor
 //
 HGCALTBAHCALSD::HGCALTBAHCALSD(const G4String& name)
-  : G4VSensitiveDetector(name) /*,
-     fHitsCollection(nullptr),*/
+  : G4VSensitiveDetector(name), fHitsCollection(nullptr)
 {
   collectionName.insert(fAHCALHitsCollectionName);
 }

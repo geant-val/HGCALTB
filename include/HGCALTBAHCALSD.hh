@@ -15,7 +15,7 @@
 
 // Includers form project files
 //
-// #  include "HGCALTBCAHCALHit.hh"
+#  include "HGCALTBAHHit.hh"
 #  include "HGCALTBConstants.hh"
 
 #  define DEBUGAHCALSD
@@ -42,7 +42,7 @@ class HGCALTBAHCALSD : public G4VSensitiveDetector
     static const G4String fAHCALHitsCollectionName;
 
   private:
-    // HGCALTBAHCALHitsCollection* fHitsCollection;
+    HGCALTBAHCALHitsCollection* fHitsCollection;
     inline G4int MapTileCpNo(G4int cpno) const;
 };
 
