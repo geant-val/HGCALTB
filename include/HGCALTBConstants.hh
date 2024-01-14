@@ -34,7 +34,7 @@ constexpr G4int CEECellMaxCpNo = 2129;
 // CEE (small) silicon cells per big hexagon (layer)
 constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 126
 
-// HGCALCHE
+// HGCALCHE constants
 //
 
 // CHE longitudinal layers
@@ -49,6 +49,19 @@ constexpr G4int CHEHexLayer = 7;
 
 // CHE (small) silicon cells per big hexagon (layer)
 constexpr G4int CHECells = CHEHexLayer * (CHECellMaxCpNo - CHECellMinCpNo);  // 7*126=882
+
+// AHCAL constants
+//
+
+// AHCAL row and column plastic tiles
+constexpr G4int AHCALrow = 24;
+constexpr G4int AHCALcolumn = 24;
+
+// AHCAL tiles per layer
+constexpr G4int AHCALtileperlayer = AHCALrow * AHCALcolumn;
+
+// AHCAL layers
+constexpr G4int AHCALLayers = 39;
 
 // MIP calibration
 //
