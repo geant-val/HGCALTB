@@ -66,6 +66,7 @@ constexpr G4int AHCALLayers = 39;
 // MIP calibration
 //
 constexpr G4double MIPSilicon = 0.085;  // MeV
+constexpr G4double MIPTile = 0.475;  // MeV
 
 }  // namespace HGCALTBConstants
 

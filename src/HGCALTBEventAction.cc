@@ -152,7 +152,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   for (std::size_t i = 0; i < HGCALTBConstants::AHCALLayers; i++) {
     auto AHCALSignals = (*AHCALHC)[i]->GetAHSignals();
     G4double AHCALLayerSignal = std::accumulate(AHCALSignals.begin(), AHCALSignals.end(), 0.);
-    fAHCALLayerSignals[i] = AHCALLayerSignal / HGCALTBConstants::MIPSilicon;  // MIP calibration
+    fAHCALLayerSignals[i] = AHCALLayerSignal / HGCALTBConstants::MIPTile;  // MIP calibration
   }
 
   // Accumulate statistics
