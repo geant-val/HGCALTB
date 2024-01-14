@@ -11,6 +11,7 @@
 //
 #include "HGCALTBDetConstruction.hh"
 
+#include "HGCALTBAHCALSD.hh"
 #include "HGCALTBCEESD.hh"
 #include "HGCALTBCHESD.hh"
 
@@ -51,6 +52,8 @@ void HGCALTBDetConstruction::ConstructSDandField()
   G4SDManager::GetSDMpointer()->AddNewDetector(CEESD);
   auto CHESD = new HGCALTBCHESD("CHESD");
   G4SDManager::GetSDMpointer()->AddNewDetector(CHESD);
+  auto AHCALSD = new HGCALTBAHCALSD("AHSD");
+  G4SDManager::GetSDMpointer()->AddNewDetector(AHCALSD);
 
   // Assign to logical volume
   //
@@ -63,6 +66,10 @@ void HGCALTBDetConstruction::ConstructSDandField()
     if (volume->GetName() == "HGCalHECellCoarse") {
       G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CHESD);
+    }
+    if (volume->GetName() == "AHcalTileSensitive") {
+      G4cout << "--->Assigning HGCALTBAHCALSD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(AHCALSD);
     }
   }
 
