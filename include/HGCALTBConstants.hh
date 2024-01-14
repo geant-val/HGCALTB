@@ -34,6 +34,12 @@ constexpr G4int CEECellMaxCpNo = 2129;
 // CEE (small) silicon cells per big hexagon (layer)
 constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 126
 
+// CEE Threshold
+constexpr G4double CEEThreshold = 0.5;  // MIP
+
+// CEE noise
+constexpr G4double CEENoiseSigma = 0.05;  // MIP
+
 // HGCALCHE constants
 //
 
@@ -64,7 +70,10 @@ constexpr G4int AHCALtileperlayer = AHCALrow * AHCALcolumn;
 constexpr G4int AHCALLayers = 39;
 
 // AHCAL MIP threshold
-constexpr G4double AHCALThreshold = 0.5;
+constexpr G4double AHCALThreshold = 0.5;  // MIP
+
+// AHCAL noise
+constexpr G4double AHCALNoiseSigma = 0.10;  // MIP
 
 // MIP calibration
 //

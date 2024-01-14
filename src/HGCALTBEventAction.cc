@@ -125,10 +125,21 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBCEESD::fCEEHitsCollectionName);
   HGCALTBCEEHitsCollection* CEEHC = GetCEEHitsCollection(CEEHCID, event);
 
+  // lambda to apply calibration, add noise and apply a 0.5 MIP cut to CEE and CHE cells
+  auto ApplyHGCALCut = [](G4double partialsum, G4double signal) -> G4double {
+    auto calibsignal = signal / HGCALTBConstants::MIPSilicon;  // MIP calibration
+    calibsignal += G4RandGauss::shoot(0., HGCALTBConstants::CEENoiseSigma);  // Noise
+    if (calibsignal > HGCALTBConstants::CEEThreshold)  // Cut
+      return partialsum + calibsignal;
+    else
+      return partialsum;
+  };
+
   for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
     auto CEESignals = (*CEEHC)[i]->GetCEESignals();
-    G4double CEELayerSignal = std::accumulate(CEESignals.begin(), CEESignals.end(), 0.);
-    fCEELayerSignals[i] = CEELayerSignal / HGCALTBConstants::MIPSilicon;  // MIP calibration
+    G4double CEELayerSignal =
+      std::accumulate(CEESignals.begin(), CEESignals.end(), 0., ApplyHGCALCut);
+    fCEELayerSignals[i] = CEELayerSignal;
   }
 
   // CHE Hits
@@ -139,8 +150,9 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
 
   for (std::size_t i = 0; i < HGCALTBConstants::CHELayers; i++) {
     auto CHESignals = (*CHEHC)[i]->GetCHESignals();
-    G4double CHELayerSignal = std::accumulate(CHESignals.begin(), CHESignals.end(), 0.);
-    fCHELayerSignals[i] = CHELayerSignal / HGCALTBConstants::MIPSilicon;  // MIP calibration
+    G4double CHELayerSignal =
+      std::accumulate(CHESignals.begin(), CHESignals.end(), 0., ApplyHGCALCut);
+    fCHELayerSignals[i] = CHELayerSignal;
   }
 
   // AHCAL Hits
@@ -149,12 +161,13 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBAHCALSD::fAHCALHitsCollectionName);
   HGCALTBAHCALHitsCollection* AHCALHC = GetAHCALHitsCollection(AHCALHCID, event);
 
-  // lambda to apply calibration and 0.5 MIP cut over AHCAL cells
+  // lambda to apply calibration, add noise and apply a 0.5 MIP cut to AHCAL cells
   auto ApplyAHCut = [MIPTile = HGCALTBConstants::MIPTile,
                      AHThreshold = HGCALTBConstants::AHCALThreshold](G4double partialsum,
                                                                      G4double signal) -> G4double {
-    auto calibsignal = signal / MIPTile;
-    if (calibsignal > AHThreshold)
+    auto calibsignal = signal / MIPTile;  // MIP calibration
+    calibsignal += G4RandGauss::shoot(0., HGCALTBConstants::AHCALNoiseSigma);  // Noise
+    if (calibsignal > AHThreshold)  // Cut
       return partialsum + calibsignal;
     else
       return partialsum;
