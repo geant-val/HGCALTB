@@ -153,7 +153,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   auto ApplyAHCut = [MIPTile = HGCALTBConstants::MIPTile,
                      AHThreshold = HGCALTBConstants::AHCALThreshold](G4double partialsum,
                                                                      G4double signal) -> G4double {
-    auto calibsignal = signal * MIPTile;
+    auto calibsignal = signal / MIPTile;
     if (calibsignal > AHThreshold)
       return partialsum + calibsignal;
     else
