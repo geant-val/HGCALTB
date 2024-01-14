@@ -63,9 +63,13 @@ constexpr G4int AHCALtileperlayer = AHCALrow * AHCALcolumn;
 // AHCAL layers
 constexpr G4int AHCALLayers = 39;
 
+// AHCAL MIP threshold
+constexpr G4double AHCALThreshold = 0.5;
+
 // MIP calibration
 //
 constexpr G4double MIPSilicon = 0.085;  // MeV
+constexpr G4double MIPTile = 0.475;  // MeV
 
 }  // namespace HGCALTBConstants
 

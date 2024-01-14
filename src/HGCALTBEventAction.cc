@@ -11,6 +11,7 @@
 //
 #include "HGCALTBEventAction.hh"
 
+#include "HGCALTBAHCALSD.hh"
 #include "HGCALTBCEESD.hh"
 #include "HGCALTBCHESD.hh"
 #include "HGCALTBRunAction.hh"
@@ -38,6 +39,7 @@ HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.)
 {
   fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
   fCHELayerSignals = std::vector<G4double>(HGCALTBConstants::CHELayers, 0.);
+  fAHCALLayerSignals = std::vector<G4double>(HGCALTBConstants::AHCALLayers, 0.);
 }
 
 HGCALTBEventAction::~HGCALTBEventAction() {}
@@ -53,6 +55,9 @@ void HGCALTBEventAction::BeginOfEventAction(const G4Event*)
     value = 0.;
   }
   for (auto& value : fCHELayerSignals) {
+    value = 0.;
+  }
+  for (auto& value : fAHCALLayerSignals) {
     value = 0.;
   }
 }
@@ -91,6 +96,23 @@ HGCALTBCHEHitsCollection* HGCALTBEventAction::GetCHEHitsCollection(G4int hcID,
   return hitsCollection;
 }
 
+// GetAHCALHitsCollection method()
+//
+HGCALTBAHCALHitsCollection* HGCALTBEventAction::GetAHCALHitsCollection(G4int hcID,
+                                                                       const G4Event* event) const
+{
+  auto hitsCollection =
+    static_cast<HGCALTBAHCALHitsCollection*>(event->GetHCofThisEvent()->GetHC(hcID));
+
+  if (!hitsCollection) {
+    G4ExceptionDescription msg;
+    msg << "Cannot access hitsCollection ID " << hcID;
+    G4Exception("HGCALTBEventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+  }
+
+  return hitsCollection;
+}
+
 void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
 {
   // Access Event random seeds
@@ -106,7 +128,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
     auto CEESignals = (*CEEHC)[i]->GetCEESignals();
     G4double CEELayerSignal = std::accumulate(CEESignals.begin(), CEESignals.end(), 0.);
-    fCEELayerSignals[i] = CEELayerSignal / HGCALTBConstants::MIPSilicon;
+    fCEELayerSignals[i] = CEELayerSignal / HGCALTBConstants::MIPSilicon;  // MIP calibration
   }
 
   // CHE Hits
@@ -118,19 +140,45 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   for (std::size_t i = 0; i < HGCALTBConstants::CHELayers; i++) {
     auto CHESignals = (*CHEHC)[i]->GetCHESignals();
     G4double CHELayerSignal = std::accumulate(CHESignals.begin(), CHESignals.end(), 0.);
-    fCHELayerSignals[i] = CHELayerSignal / HGCALTBConstants::MIPSilicon;
+    fCHELayerSignals[i] = CHELayerSignal / HGCALTBConstants::MIPSilicon;  // MIP calibration
+  }
+
+  // AHCAL Hits
+  //
+  auto AHCALHCID =
+    G4SDManager::GetSDMpointer()->GetCollectionID(HGCALTBAHCALSD::fAHCALHitsCollectionName);
+  HGCALTBAHCALHitsCollection* AHCALHC = GetAHCALHitsCollection(AHCALHCID, event);
+
+  // lambda to apply calibration and 0.5 MIP cut over AHCAL cells
+  auto ApplyAHCut = [MIPTile = HGCALTBConstants::MIPTile,
+                     AHThreshold = HGCALTBConstants::AHCALThreshold](G4double partialsum,
+                                                                     G4double signal) -> G4double {
+    auto calibsignal = signal / MIPTile;
+    if (calibsignal > AHThreshold)
+      return partialsum + calibsignal;
+    else
+      return partialsum;
+  };
+
+  for (std::size_t i = 0; i < HGCALTBConstants::AHCALLayers; i++) {
+    auto AHCALSignals = (*AHCALHC)[i]->GetAHSignals();
+    G4double AHCALLayerSignal =
+      std::accumulate(AHCALSignals.begin(), AHCALSignals.end(), 0., ApplyAHCut);
+    fAHCALLayerSignals[i] = AHCALLayerSignal;
   }
 
   // Accumulate statistics
   //
   auto CEETot = std::accumulate(fCEELayerSignals.begin(), fCEELayerSignals.end(), 0.);
   auto CHETot = std::accumulate(fCHELayerSignals.begin(), fCHELayerSignals.end(), 0.);
-  auto HGCALTot = CEETot + CHETot;
+  auto AHCALTot = std::accumulate(fAHCALLayerSignals.begin(), fAHCALLayerSignals.end(), 0.);
+  auto HGCALTot = CEETot + CHETot + AHCALTot;
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillNtupleDColumn(0, edep);
   analysisManager->FillNtupleDColumn(1, CEETot);
   analysisManager->FillNtupleDColumn(2, CHETot);
-  analysisManager->FillNtupleDColumn(3, HGCALTot);
+  analysisManager->FillNtupleDColumn(3, AHCALTot);
+  analysisManager->FillNtupleDColumn(4, HGCALTot);
   analysisManager->AddNtupleRow();
 }
 
