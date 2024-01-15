@@ -44,7 +44,16 @@ class HGCALTBAHCALSD : public G4VSensitiveDetector
   private:
     HGCALTBAHCALHitsCollection* fHitsCollection;
     inline G4int MapTileCpNo(G4int cpno) const;
+    inline G4double ApplyBirk(G4double edep, G4double stepl) const;
 };
+
+inline G4double HGCALTBAHCALSD::ApplyBirk(G4double edep, G4double stepl) const
+{
+  const G4double kBirk = 0.126;  // mm/MeV (to be confirmed)
+  G4double newe = ((edep / stepl) / (1. + kBirk * (edep / stepl))) * stepl;
+  if (newe > edep) newe = edep;
+  return newe;
+}
 
 inline G4int HGCALTBAHCALSD::MapTileCpNo(G4int cpno) const
 {
