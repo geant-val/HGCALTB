@@ -74,7 +74,13 @@ G4bool HGCALTBAHCALSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // Access the corresponding hit
   //
   auto hit = (*fHitsCollection)[AHCALLayerID];
-  hit->AddTileEdep(TileID, aStep->GetTotalEnergyDeposit());
+  auto edep = aStep->GetTotalEnergyDeposit();
+  auto stepl = aStep->GetStepLength();
+  auto charge = aStep->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGCharge();
+  if (stepl > 0. && charge != 0) {
+    edep = ApplyBirk(edep, stepl);
+  }
+  hit->AddTileEdep(TileID, edep);
 
   return true;
 }
