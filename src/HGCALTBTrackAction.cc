@@ -27,7 +27,9 @@
 
 // Constructor and de-constructor
 //
-HGCALTBTrackAction::HGCALTBTrackAction() : G4UserTrackingAction() {}
+HGCALTBTrackAction::HGCALTBTrackAction(HGCALTBEventAction* EvtAction)
+  : G4UserTrackingAction(), fEventAction(EvtAction)
+{}
 
 HGCALTBTrackAction::~HGCALTBTrackAction() {}
 
@@ -51,6 +53,7 @@ void HGCALTBTrackAction::PostUserTrackingAction(const G4Track* aTrack)
         InteractionLayer = 1;  // Had interacted in HGCALEE Section
       else
         InteractionLayer = 0;
+      fEventAction->SetIntLayer(InteractionLayer);
     }
   }
 }

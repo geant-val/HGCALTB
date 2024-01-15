@@ -39,7 +39,7 @@ void HGCALTBActInitialization::Build() const
   SetUserAction(new HGCALTBStepAction(EventAction));
   SetUserAction(new HGCALTBRunAction(EventAction));
   SetUserAction(EventAction);
-  // SetUserAction(new HGCALTBTrackAction);
+  SetUserAction(new HGCALTBTrackAction(EventAction));
 }
 
 //**************************************************
