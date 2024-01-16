@@ -32,7 +32,7 @@ namespace CLIOutputs
 {
 void PrintHelp()
 {
-  G4cout << "Usage: ATLTileCalTB [OPTION...]\n\n"
+  G4cout << "Usage: HGCALTB [OPTION...]\n\n"
          << "Options:\n"
          << "  -m MACRO        path to macro file to run\n"
          << "  -u UISESSION    string of the Geant4 UI session to use\n"
@@ -43,7 +43,7 @@ void PrintHelp()
 }
 void PrintError()
 {
-  G4cerr << "Wrong usage, see 'ATLTileCalTB -h' for more information" << G4endl;
+  G4cerr << "Wrong usage, see 'HGCALTB -h' for more information" << G4endl;
 }
 }  // namespace CLIOutputs
 
