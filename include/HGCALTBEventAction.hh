@@ -36,6 +36,7 @@ class HGCALTBEventAction : public G4UserEventAction
     virtual void EndOfEventAction(const G4Event* event);
 
     void Addedep(G4double stepedep);
+    void SetIntLayer(G4int IntTrack);
     std::vector<G4double>& GetCEESignals() { return fCEELayerSignals; };
     std::vector<G4double>& GetCHESignals() { return fCHELayerSignals; };
     std::vector<G4double>& GetAHCALSignals() { return fAHCALLayerSignals; };
@@ -45,6 +46,7 @@ class HGCALTBEventAction : public G4UserEventAction
     HGCALTBCHEHitsCollection* GetCHEHitsCollection(G4int hcID, const G4Event* event) const;
     HGCALTBAHCALHitsCollection* GetAHCALHitsCollection(G4int hcID, const G4Event* event) const;
     G4double edep;  // energy deposited in every volume
+    G4int fIntLayer;  // 1 if primary interacted in CEE, 0 otherwise
     std::vector<G4double> fCEELayerSignals;  // signals per CEE layer
     std::vector<G4double> fCHELayerSignals;  // signals per CHE layer
     std::vector<G4double> fAHCALLayerSignals;  // signals per AHCAL layer
@@ -53,6 +55,11 @@ class HGCALTBEventAction : public G4UserEventAction
 inline void HGCALTBEventAction::Addedep(G4double stepedep)
 {
   edep += stepedep;
+}
+
+inline void HGCALTBEventAction::SetIntLayer(G4int IntTrack)
+{
+  fIntLayer = IntTrack;
 }
 
 #endif  // HGCALTBEventAction_h 1

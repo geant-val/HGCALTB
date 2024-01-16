@@ -15,6 +15,7 @@
 #include "HGCALTBPrimaryGenAction.hh"
 #include "HGCALTBRunAction.hh"
 #include "HGCALTBStepAction.hh"
+#include "HGCALTBTrackAction.hh"
 
 // Constructor and de-constructor
 //
@@ -38,6 +39,7 @@ void HGCALTBActInitialization::Build() const
   SetUserAction(new HGCALTBStepAction(EventAction));
   SetUserAction(new HGCALTBRunAction(EventAction));
   SetUserAction(EventAction);
+  SetUserAction(new HGCALTBTrackAction(EventAction));
 }
 
 //**************************************************

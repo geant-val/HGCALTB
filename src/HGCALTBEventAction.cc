@@ -35,7 +35,7 @@
 
 // constructor and de-constructor
 //
-HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.)
+HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.), fIntLayer(0)
 {
   fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
   fCHELayerSignals = std::vector<G4double>(HGCALTBConstants::CHELayers, 0.);
@@ -51,6 +51,7 @@ void HGCALTBEventAction::BeginOfEventAction(const G4Event*)
   // Initialize variables per event
   //
   edep = 0.;
+  fIntLayer = 0;
   for (auto& value : fCEELayerSignals) {
     value = 0.;
   }
@@ -192,6 +193,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   analysisManager->FillNtupleDColumn(2, CHETot);
   analysisManager->FillNtupleDColumn(3, AHCALTot);
   analysisManager->FillNtupleDColumn(4, HGCALTot);
+  analysisManager->FillNtupleIColumn(5, fIntLayer);
   analysisManager->AddNtupleRow();
 }
 

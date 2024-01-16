@@ -42,6 +42,7 @@ HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction)
   analysisManager->CreateNtupleDColumn("CHETot");
   analysisManager->CreateNtupleDColumn("AHCALTot");
   analysisManager->CreateNtupleDColumn("HGCALTot");
+  analysisManager->CreateNtupleIColumn("IntLayer");
   analysisManager->CreateNtupleDColumn("CEESignals", fEventAction->GetCEESignals());
   analysisManager->CreateNtupleDColumn("CHESignals", fEventAction->GetCHESignals());
   analysisManager->CreateNtupleDColumn("AHCALSignals", fEventAction->GetAHCALSignals());
