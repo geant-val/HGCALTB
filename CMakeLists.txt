@@ -66,6 +66,7 @@ set(HGCALTB_SCRIPTS
     init_vis.mac
     vis.mac
     HGCALTBrun.mac
+    HGCALTBfullrun.mac
   )
 
 foreach(_script ${HGCALTB_SCRIPTS})

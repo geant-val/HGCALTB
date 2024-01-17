@@ -1,9 +1,9 @@
 // Simple macro card to reconstruct pion energies
 
 // Calibration constants from TB paper
-const double alpha = 10.5;  // MeV/MIP
-const double beta = 80.0;  // MeV/MIP
-const double delta = 0.4;  // MeV/MIP
+double alpha = 10.5;  // MeV/MIP
+double beta = 80.0;  // MeV/MIP
+double delta = 0.4;  // MeV/MIP
 
 // Apply calibration constants
 double recene(const double CEETot, const double CHETOT, const double AHCALTot)
@@ -12,9 +12,106 @@ double recene(const double CEETot, const double CHETOT, const double AHCALTot)
   return ene;
 }
 
+struct AnalysisOutput
+{
+    double CEEAvg;
+    double CEESigma;
+    double CHEAvg;
+    double CHESigma;
+};
+
+AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write);
+
 void energy()
 {
-  const string filename = "HGCALTBout_Run0.root";
+  // beam energies
+  const int runs = 8;
+  const std::array<double, runs> energies{20., 50., 80., 100., 120., 200., 250., 300.};
+
+  // re-create output file
+  TFile* file(TFile::Open("HGCALTBpiene.root", "RECREATE"));
+  file->Close();
+
+  // final arrays before correction
+  std::array<double, runs> CEEresp{0.};
+  std::array<double, runs> CHEresp{0.};
+  std::array<double, runs> CEEresl{0.};
+  std::array<double, runs> CHEresl{0.};
+  // final arrays after correction
+  std::array<double, runs> CEErespcorr{0.};
+  std::array<double, runs> CHErespcorr{0.};
+  std::array<double, runs> CEEreslcorr{0.};
+  std::array<double, runs> CHEreslcorr{0.};
+
+  // do analysis over loop
+  cout << "Using calibration constants alpha " << alpha << " beta " << beta << " delta " << delta
+       << endl;
+  for (std::size_t i = 0; i < runs; i++) {
+    auto out = DoAnalysis(i, energies[i], true);
+    CEEresp[i] = out.CEEAvg / energies[i];
+    CHEresp[i] = out.CHEAvg / energies[i];
+    CEEresl[i] = out.CEESigma / out.CEEAvg;
+    CHEresl[i] = out.CHESigma / out.CHEAvg;
+  }
+
+  // apply calibration corrections as TB paper
+  beta = beta / CHEresp[1];
+  alpha = alpha * 1.035;  // from TB paper
+  cout << "Using calibration constants alpha " << alpha << " beta " << beta << " delta " << delta
+       << endl;
+  for (std::size_t i = 0; i < runs; i++) {
+    auto out = DoAnalysis(i, energies[i], false);
+    CEErespcorr[i] = out.CEEAvg / energies[i];
+    CHErespcorr[i] = out.CHEAvg / energies[i];
+    CEEreslcorr[i] = out.CEESigma / out.CEEAvg;
+    CHEreslcorr[i] = out.CHESigma / out.CHEAvg;
+  }
+
+  TFile* outputfile(TFile::Open("HGCALTBpiene.root", "UPDATE"));
+  outputfile->cd();
+
+  TGraph GrCEEresp(runs, energies.data(), CEEresp.data());
+  GrCEEresp.SetTitle("CEE response; Beam Energy [GeV]; Response");
+  GrCEEresp.SetName("CEEresponse");
+  TGraph GrCHEresp(runs, energies.data(), CHEresp.data());
+  GrCHEresp.SetTitle("CHE response; Beam Energy [GeV]; Response");
+  GrCHEresp.SetName("CHEresponse");
+  TGraph GrCEEresl(runs, energies.data(), CEEresl.data());
+  GrCEEresl.SetTitle("CEE resolution; Beam Energy [GeV]; Resolution");
+  GrCEEresl.SetName("CEEresolution");
+  TGraph GrCHEresl(runs, energies.data(), CHEresl.data());
+  GrCHEresl.SetTitle("CHE resolution; Beam Energy [GeV]; Resolution");
+  GrCHEresl.SetName("CHEresolution");
+  GrCEEresp.Write();
+  GrCHEresp.Write();
+  GrCEEresl.Write();
+  GrCHEresl.Write();
+
+  TGraph GrCEErespcorr(runs, energies.data(), CEErespcorr.data());
+  GrCEErespcorr.SetTitle("CEE response corrected; Beam Energy [GeV]; Response");
+  GrCEErespcorr.SetName("CEEresponsecorrected");
+  TGraph GrCHErespcorr(runs, energies.data(), CHErespcorr.data());
+  GrCHErespcorr.SetTitle("CHE response corrected; Beam Energy [GeV]; Response");
+  GrCHErespcorr.SetName("CHEresponsecorrected");
+  TGraph GrCEEreslcorr(runs, energies.data(), CEEreslcorr.data());
+  GrCEEreslcorr.SetTitle("CEE resolution corrected; Beam Energy [GeV]; Resolution");
+  GrCEEreslcorr.SetName("CEEresolutioncorrected");
+  TGraph GrCHEreslcorr(runs, energies.data(), CHEreslcorr.data());
+  GrCHEreslcorr.SetTitle("CHE resolution corrected; Beam Energy [GeV]; Resolution");
+  GrCHEreslcorr.SetName("CHEresolutioncorrected");
+  GrCEErespcorr.Write();
+  GrCHErespcorr.Write();
+  GrCEEreslcorr.Write();
+  GrCHEreslcorr.Write();
+
+  outputfile->Close();
+}
+
+AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write)
+{
+  const std::string ene_name = std::to_string(static_cast<int>(ene));
+  const string filename = "Data1/HGCALTBout_Run" + std::to_string(RunNo) + ".root";
+  cout << "-->Analysis of " << filename << endl;
   TFile* file = TFile::Open(filename.c_str(), "READ");
   TTree* tree = (TTree*)file->Get("HGCALTBout");
 
@@ -33,9 +130,12 @@ void energy()
   vector<double>* AHCALSignals = NULL;
   tree->SetBranchAddress("AHCALSignals", &AHCALSignals);
 
-  TH1F H1CEE("H1CEE", "H1CEE", 300, 0., 150.);
-  TH1F H1CHE("H1CHE", "H1CHE", 300, 0., 150.);
-  TH1F H1TOT("H1Tot", "H1Tot", 300, 0., 150.);
+  const auto H1CEEname = ("H1CEE" + ene_name).c_str();
+  const auto H1CHEname = ("H1CHE" + ene_name).c_str();
+  const auto H1Totname = ("H1CTot" + ene_name).c_str();
+  TH1F H1CEE(H1CEEname, H1CEEname, static_cast<int>(ene) * 4, 0., ene * 2.);
+  TH1F H1CHE(H1CHEname, H1CHEname, static_cast<int>(ene) * 4, 0., ene * 2.);
+  TH1F H1TOT(H1Totname, H1Totname, static_cast<int>(ene) * 4, 0., ene * 2.);
 
   bool CEEInteracted = false;
 
@@ -55,9 +155,21 @@ void energy()
     CEEInteracted = false;
   }
 
-  TFile* outputfile(TFile::Open("HGCALTBpiene.root", "RECREATE"));
-  H1CEE.Write();
-  H1CHE.Write();
-  H1TOT.Write();
+  TFile* outputfile(TFile::Open("HGCALTBpiene.root", "UPDATE"));
+  outputfile->cd();
+  H1CEE.Fit("gaus", "Q");
+  H1CHE.Fit("gaus", "Q");
+  if (Write) {
+    H1CEE.Write();
+    H1CHE.Write();
+    H1TOT.Write();
+  }
   outputfile->Close();
+
+  auto H1CEEAvg = H1CEE.GetFunction("gaus")->GetParameter(1);
+  auto H1CEESigma = H1CEE.GetFunction("gaus")->GetParameter(2);
+  auto H1CHEAvg = H1CHE.GetFunction("gaus")->GetParameter(1);
+  auto H1CHESigma = H1CHE.GetFunction("gaus")->GetParameter(2);
+  AnalysisOutput out{H1CEEAvg, H1CEESigma, H1CHEAvg, H1CHESigma};
+  return out;
 }
