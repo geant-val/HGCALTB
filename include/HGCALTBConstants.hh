@@ -46,6 +46,9 @@ constexpr G4double CEENoiseSigma = 0.05;  // MIP
 // CHE longitudinal layers
 constexpr G4int CHELayers = 12;
 
+// CHE longitudinal layers with 7 silicon wafers
+constexpr G4int CHESevenWaferLayers = 9;
+
 // CHE copynumbers for HGCalHECellCoarse (exluding HGCALHECellCoarseHalf)
 constexpr G4int CHECellMinCpNo = 2003;
 constexpr G4int CHECellMaxCpNo = 2129;
