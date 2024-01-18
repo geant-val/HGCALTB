@@ -1,4 +1,5 @@
 // Simple macro card to reconstruct pion energies
+// Usage: root 'energy.C("path-to-data")'
 
 // Calibration constants from TB paper
 double alpha = 10.5;  // MeV/MIP
@@ -20,9 +21,9 @@ struct AnalysisOutput
     double CHESigma;
 };
 
-AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write);
+AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write, const string path);
 
-void energy()
+void energy(const string path)
 {
   // beam energies
   const int runs = 8;
@@ -47,7 +48,7 @@ void energy()
   cout << "Using calibration constants alpha " << alpha << " beta " << beta << " delta " << delta
        << endl;
   for (std::size_t i = 0; i < runs; i++) {
-    auto out = DoAnalysis(i, energies[i], true);
+    auto out = DoAnalysis(i, energies[i], true, path);
     CEEresp[i] = out.CEEAvg / energies[i];
     CHEresp[i] = out.CHEAvg / energies[i];
     CEEresl[i] = out.CEESigma / out.CEEAvg;
@@ -55,12 +56,12 @@ void energy()
   }
 
   // apply calibration corrections as TB paper
-  beta = beta / CHEresp[1];
-  alpha = alpha * 1.035;  // from TB paper
+  beta = beta / CHEresp[1];  // use run with pi- at 50 GeV to recalibrate
+  alpha = alpha / 1.035;  // from TB paper with e+
   cout << "Using calibration constants alpha " << alpha << " beta " << beta << " delta " << delta
        << endl;
   for (std::size_t i = 0; i < runs; i++) {
-    auto out = DoAnalysis(i, energies[i], false);
+    auto out = DoAnalysis(i, energies[i], false, path);
     CEErespcorr[i] = out.CEEAvg / energies[i];
     CHErespcorr[i] = out.CHEAvg / energies[i];
     CEEreslcorr[i] = out.CEESigma / out.CEEAvg;
@@ -107,10 +108,11 @@ void energy()
   outputfile->Close();
 }
 
-AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write)
+AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
+                          const string path = "")
 {
   const std::string ene_name = std::to_string(static_cast<int>(ene));
-  const string filename = "Data1/HGCALTBout_Run" + std::to_string(RunNo) + ".root";
+  const string filename = path + "/HGCALTBout_Run" + std::to_string(RunNo) + ".root";
   cout << "-->Analysis of " << filename << endl;
   TFile* file = TFile::Open(filename.c_str(), "READ");
   TTree* tree = (TTree*)file->Get("HGCALTBout");
