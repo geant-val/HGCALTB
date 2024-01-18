@@ -151,8 +151,15 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
 
   for (std::size_t i = 0; i < HGCALTBConstants::CHELayers; i++) {
     auto CHESignals = (*CHEHC)[i]->GetCHESignals();
-    G4double CHELayerSignal =
-      std::accumulate(CHESignals.begin(), CHESignals.end(), 0., ApplyHGCALCut);
+    G4double CHELayerSignal = 0.;
+    if (i < HGCALTBConstants::CHESevenWaferLayers) {
+      CHELayerSignal = std::accumulate(CHESignals.begin(), CHESignals.end(), 0., ApplyHGCALCut);
+    }
+    else {  // for last 3 CHE layers only add up cells for 1 silicon wafer
+      CHELayerSignal =
+        std::accumulate(CHESignals.begin(), CHESignals.begin() + (HGCALTBConstants::CEECells - 1),
+                        0., ApplyHGCALCut);
+    }
     fCHELayerSignals[i] = CHELayerSignal;
   }
 
