@@ -1,15 +1,17 @@
 // Simple macro card to reconstruct pion energies
-// Usage: root 'energy.C("path-to-data")'
+// Usage: root 'energy.C("path-to-data/")'
 
 // Calibration constants from TB paper
-double alpha = 10.5;  // MeV/MIP
-double beta = 80.0;  // MeV/MIP
-double delta = 0.4;  // MeV/MIP
+namespace Calib {
+   double alpha = 10.5;  // MeV/MIP
+   double beta = 80.0;  // MeV/MIP
+   double delta = 0.4;  // MeV/MIP
+}
 
 // Apply calibration constants
 double recene(const double CEETot, const double CHETOT, const double AHCALTot)
 {
-  auto ene = alpha * CEETot + beta * (CHETOT + delta * AHCALTot);
+  auto ene = Calib::alpha * CEETot + Calib::beta * (CHETOT + Calib::delta * AHCALTot);
   return ene;
 }
 
@@ -45,7 +47,7 @@ void energy(const string path)
   std::array<double, runs> CHEreslcorr{0.};
 
   // do analysis over loop
-  cout << "Using calibration constants alpha " << alpha << " beta " << beta << " delta " << delta
+  cout << "Using calibration constants alpha " << Calib::alpha << " beta " << Calib::beta << " delta " << Calib::delta
        << endl;
   for (std::size_t i = 0; i < runs; i++) {
     auto out = DoAnalysis(i, energies[i], true, path);
@@ -56,9 +58,9 @@ void energy(const string path)
   }
 
   // apply calibration corrections as TB paper
-  beta = beta / CHEresp[1];  // use run with pi- at 50 GeV to recalibrate
-  alpha = alpha / 1.035;  // from TB paper with e+
-  cout << "Using calibration constants alpha " << alpha << " beta " << beta << " delta " << delta
+  Calib::beta = Calib::beta / CHEresp[1];  // use run with pi- at 50 GeV to recalibrate
+  Calib::alpha = Calib::alpha / 1.035;  // from TB paper with e+
+  cout << "Using calibration constants alpha " << Calib::alpha << " beta " << Calib::beta << " delta " << Calib::delta
        << endl;
   for (std::size_t i = 0; i < runs; i++) {
     auto out = DoAnalysis(i, energies[i], false, path);
@@ -112,7 +114,7 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
                           const string path = "")
 {
   const std::string ene_name = std::to_string(static_cast<int>(ene));
-  const string filename = path + "/HGCALTBout_Run" + std::to_string(RunNo) + ".root";
+  const string filename = path + "HGCALTBout_Run" + std::to_string(RunNo) + ".root";
   cout << "-->Analysis of " << filename << endl;
   TFile* file = TFile::Open(filename.c_str(), "READ");
   TTree* tree = (TTree*)file->Get("HGCALTBout");
@@ -132,12 +134,12 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
   vector<double>* AHCALSignals = NULL;
   tree->SetBranchAddress("AHCALSignals", &AHCALSignals);
 
-  const auto H1CEEname = ("H1CEE" + ene_name).c_str();
-  const auto H1CHEname = ("H1CHE" + ene_name).c_str();
-  const auto H1Totname = ("H1CTot" + ene_name).c_str();
-  TH1F H1CEE(H1CEEname, H1CEEname, static_cast<int>(ene) * 4, 0., ene * 2.);
-  TH1F H1CHE(H1CHEname, H1CHEname, static_cast<int>(ene) * 4, 0., ene * 2.);
-  TH1F H1TOT(H1Totname, H1Totname, static_cast<int>(ene) * 4, 0., ene * 2.);
+  const auto H1CEEname = ("H1CEE" + ene_name);
+  const auto H1CHEname = ("H1CHE" + ene_name);
+  const auto H1Totname = ("H1CTot" + ene_name);
+  TH1F H1CEE(H1CEEname.c_str(), H1CEEname.c_str(), static_cast<int>(ene) * 4, 0., ene * 2.);
+  TH1F H1CHE(H1CHEname.c_str(), H1CHEname.c_str(), static_cast<int>(ene) * 4, 0., ene * 2.);
+  TH1F H1TOT(H1Totname.c_str(), H1Totname.c_str(), static_cast<int>(ene) * 4, 0., ene * 2.);
 
   bool CEEInteracted = false;
 
