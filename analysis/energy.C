@@ -1,12 +1,14 @@
 // Simple macro card to reconstruct pion energies
 // Usage: root 'energy.C("path-to-data/")'
+// or: root energy.C if data in the same directory
 
 // Calibration constants from TB paper
-namespace Calib {
-   double alpha = 10.5;  // MeV/MIP
-   double beta = 80.0;  // MeV/MIP
-   double delta = 0.4;  // MeV/MIP
-}
+namespace Calib
+{
+double alpha = 10.5;  // MeV/MIP
+double beta = 80.0;  // MeV/MIP
+double delta = 0.4;  // MeV/MIP
+}  // namespace Calib
 
 // Apply calibration constants
 double recene(const double CEETot, const double CHETOT, const double AHCALTot)
@@ -25,7 +27,7 @@ struct AnalysisOutput
 
 AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write, const string path);
 
-void energy(const string path)
+void energy(const string path = "")
 {
   // beam energies
   const int runs = 8;
@@ -47,8 +49,8 @@ void energy(const string path)
   std::array<double, runs> CHEreslcorr{0.};
 
   // do analysis over loop
-  cout << "Using calibration constants alpha " << Calib::alpha << " beta " << Calib::beta << " delta " << Calib::delta
-       << endl;
+  cout << "Using calibration constants alpha " << Calib::alpha << " beta " << Calib::beta
+       << " delta " << Calib::delta << endl;
   for (std::size_t i = 0; i < runs; i++) {
     auto out = DoAnalysis(i, energies[i], true, path);
     CEEresp[i] = out.CEEAvg / energies[i];
@@ -60,8 +62,8 @@ void energy(const string path)
   // apply calibration corrections as TB paper
   Calib::beta = Calib::beta / CHEresp[1];  // use run with pi- at 50 GeV to recalibrate
   Calib::alpha = Calib::alpha / 1.035;  // from TB paper with e+
-  cout << "Using calibration constants alpha " << Calib::alpha << " beta " << Calib::beta << " delta " << Calib::delta
-       << endl;
+  cout << "Using calibration constants alpha " << Calib::alpha << " beta " << Calib::beta
+       << " delta " << Calib::delta << endl;
   for (std::size_t i = 0; i < runs; i++) {
     auto out = DoAnalysis(i, energies[i], false, path);
     CEErespcorr[i] = out.CEEAvg / energies[i];
@@ -127,6 +129,8 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
   tree->SetBranchAddress("AHCALTot", &AHCALTot);
   double HGCALTot{0.};
   tree->SetBranchAddress("HGCALTot", &HGCALTot);
+  int IntLayer{0};
+  tree->SetBranchAddress("IntLayer", &IntLayer);
   vector<double>* CEESignals = NULL;
   tree->SetBranchAddress("CEESignals", &CEESignals);
   vector<double>* CHESignals = NULL;
@@ -137,9 +141,9 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
   const auto H1CEEname = ("H1CEE" + ene_name);
   const auto H1CHEname = ("H1CHE" + ene_name);
   const auto H1Totname = ("H1CTot" + ene_name);
-  TH1F H1CEE(H1CEEname.c_str(), H1CEEname.c_str(), static_cast<int>(ene) * 4, 0., ene * 2.);
-  TH1F H1CHE(H1CHEname.c_str(), H1CHEname.c_str(), static_cast<int>(ene) * 4, 0., ene * 2.);
-  TH1F H1TOT(H1Totname.c_str(), H1Totname.c_str(), static_cast<int>(ene) * 4, 0., ene * 2.);
+  TH1F H1CEE(H1CEEname.c_str(), H1CEEname.c_str(), 400, 0., ene * 2.);
+  TH1F H1CHE(H1CHEname.c_str(), H1CHEname.c_str(), 400, 0., ene * 2.);
+  TH1F H1TOT(H1Totname.c_str(), H1Totname.c_str(), 400, 0., ene * 2.);
 
   bool CEEInteracted = false;
 
@@ -148,7 +152,8 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
     if (HGCALTot < 300.) continue;  // <300 MIP, not interacting event
     auto piene = recene(CEETot, CHETot, AHCALTot) / 1000;  // GeV
 
-    if (CEETot > 200.) CEEInteracted = true;
+    if (CEETot > 500.) CEEInteracted = true;
+    // if (IntLayer==1) CEEInteracted = true;
 
     if (CEEInteracted)
       H1CEE.Fill(piene);
@@ -175,5 +180,6 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
   auto H1CHEAvg = H1CHE.GetFunction("gaus")->GetParameter(1);
   auto H1CHESigma = H1CHE.GetFunction("gaus")->GetParameter(2);
   AnalysisOutput out{H1CEEAvg, H1CEESigma, H1CHEAvg, H1CHESigma};
+
   return out;
 }
