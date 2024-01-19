@@ -23,6 +23,10 @@
 #include "G4SDManager.hh"
 #include "G4VisAttributes.hh"
 
+// Includers from std
+//
+#include <string>
+
 // Constructors and de-constructor
 //
 HGCALTBDetConstruction::HGCALTBDetConstruction() : G4VUserDetectorConstruction() {}
@@ -37,7 +41,7 @@ G4VPhysicalVolume* HGCALTBDetConstruction::Construct()
   Parser.Read("TBHGCal181Oct.gdml", false);
   auto worldPV = Parser.GetWorldVolume();
 
-  // DefineVisAttributes();
+  DefineVisAttributes();
 
   return worldPV;
 }
@@ -78,6 +82,75 @@ void HGCALTBDetConstruction::ConstructSDandField()
 
 // DefineVisAttributes() private method
 //
-void HGCALTBDetConstruction::DefineVisAttributes() {}
+void HGCALTBDetConstruction::DefineVisAttributes()
+{
+  // Lambda function to check if a string is included in another
+  auto isSubstring = [](const std::string& mainString, const std::string& searchString) {
+    return mainString.find(searchString) != std::string::npos;
+  };
+
+  // VisAttributes definitions
+  auto SiWaferVisAttr = new G4VisAttributes();
+  SiWaferVisAttr->SetForceSolid(true);
+  SiWaferVisAttr->SetColor(G4Color::Green());
+  SiWaferVisAttr->SetDaughtersInvisible(true);
+  auto TotalInvisibleVisAttr = new G4VisAttributes();
+  TotalInvisibleVisAttr->SetVisibility(false);
+  TotalInvisibleVisAttr->SetDaughtersInvisible(true);
+  auto TileVisAttr = new G4VisAttributes();
+  TileVisAttr->SetForceSolid(false);
+  TileVisAttr->SetColor(G4Color::Red());
+  TileVisAttr->SetDaughtersInvisible(true);
+
+  // Assign vis attributes
+  //
+  auto LVStore = G4LogicalVolumeStore::GetInstance();
+  for (auto volume : *LVStore) {
+    // beam line
+    if (volume->GetName() == "HGCalBeam") volume->SetVisAttributes(TotalInvisibleVisAttr);
+    if (volume->GetName() == "HGCalBeamDown") volume->SetVisAttributes(TotalInvisibleVisAttr);
+    if (volume->GetName() == "HGCalBeamS5") volume->SetVisAttributes(TotalInvisibleVisAttr);
+    if (volume->GetName() == "HGCalBeamS6") volume->SetVisAttributes(TotalInvisibleVisAttr);
+    if (volume->GetName() == "CMSE") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (volume->GetName() == "HGCal") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    // cee
+    if (volume->GetName() == "HGCalEE") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEEBlock"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEEgap"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEEAlcase"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEEAbsorber"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEECuPCB"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEEPCB"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEECuKapton"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalEESensitive"))
+      volume->SetVisAttributes(SiWaferVisAttr);
+    // che
+    if (volume->GetName() == "HGCalHE") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHEBlock"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHEgap"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHEAbsorber"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHECuPCB"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHEPCB"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHECuKapton"))
+      volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "HGCalHESiliconSensitive"))
+      volume->SetVisAttributes(SiWaferVisAttr);
+    // che
+    if (volume->GetName() == "HGCalAH") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (isSubstring(volume->GetName(), "AHcalTileSensitive")) volume->SetVisAttributes(TileVisAttr);
+  }
+}
 
 //**************************************************
