@@ -106,3 +106,88 @@ class Test(BaseParser):
             yStatErrorsMinus=[0.]*len(list(che_resl_pi.GetX())),
             yStatErrorsPlus=[0.]*len(list(che_resl_pi.GetX())),
         )
+        # data: CMS HGCAL TB paper arxiv.org/abs/2211.04740
+        # create JSON files for experimental comparison only
+        # once.
+        tbenergies = [20.,50.,80.,100.,120.,200.,250.,300.]
+        tbEX = [0.]*len(tbenergies)
+        tbEY = tbEX
+        tbceeresp=[0.669,0.785,0.831,0.850,0.869,0.900,0.919,0.927]
+        tbcheresp=[0.921,1.000,1.039,1.055,1.062,1.076,1.088,1.091]
+        tbceeresl=[0.307,0.215,0.178,0.160,0.149,0.124,0.116,0.105]
+        tbcheresl=[0.279,0.197,0.165,0.160,0.144,0.126,0.119,0.113]
+        if physlist == "FTFP_BERT": # do only once
+            print('Creating JSONs for experimental data')
+            # cee response
+            yield getJSON(jobs[0], 'chart',
+                mctool_name="experiment",
+                mctool_version="experiment",
+                mctool_model="experiment",
+                testName="experiment",
+                #inspireId = ,
+                targetName='HGCALTB',
+                beamParticle='pi-',
+                beamEnergies=tbenergies,
+                observableName='CEE pion response',
+                xAxisName=cee_resp_pi.GetXaxis().GetTitle(),
+                yAxisName=cee_resp_pi.GetYaxis().GetTitle(),
+                xValues=tbenergies,
+                yValues=tbceeresp,
+                yStatErrorsMinus=tbEX,
+                yStatErrorsPlus=tbEY,
+            )
+            # che response
+            yield getJSON(jobs[0], 'chart',
+                mctool_name="experiment",
+                mctool_version="experiment",
+                mctool_model="experiment",
+                testName="experiment",
+                #inspireId = ,
+                targetName='HGCALTB',
+                beamParticle='pi-',
+                beamEnergies=tbenergies,
+                observableName='CHE pion response',
+                xAxisName=che_resp_pi.GetXaxis().GetTitle(),
+                yAxisName=che_resp_pi.GetYaxis().GetTitle(),
+                xValues=tbenergies,
+                yValues=tbcheresp,
+                yStatErrorsMinus=tbEX,
+                yStatErrorsPlus=tbEY,
+            )
+            # cee resolution
+            yield getJSON(jobs[0], 'chart',
+                mctool_name="experiment",
+                mctool_version="experiment",
+                mctool_model="experiment",
+                testName="experiment",
+                #inspireId = ,
+                targetName='HGCALTB',
+                beamParticle='pi-',
+                beamEnergies=tbenergies,
+                observableName='CEE pion resolution',
+                xAxisName=cee_resl_pi.GetXaxis().GetTitle(),
+                yAxisName=cee_resl_pi.GetYaxis().GetTitle(),
+                xValues=tbenergies,
+                yValues=tbceeresl,
+                yStatErrorsMinus=tbEX,
+                yStatErrorsPlus=tbEY,
+            )
+            # che resolution
+            yield getJSON(jobs[0], 'chart',
+                mctool_name="experiment",
+                mctool_version="experiment",
+                mctool_model="experiment",
+                testName="experiment",
+                #inspireId = ,
+                targetName='HGCALTB',
+                beamParticle='pi-',
+                beamEnergies=tbenergies,
+                observableName='CHE pion resolution',
+                xAxisName=che_resl_pi.GetXaxis().GetTitle(),
+                yAxisName=che_resl_pi.GetYaxis().GetTitle(),
+                xValues=tbenergies,
+                yValues=tbcheresl,
+                yStatErrorsMinus=tbEX,
+                yStatErrorsPlus=tbEY,
+            )
+        print("End of parsing")
