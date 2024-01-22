@@ -1,6 +1,13 @@
 # HGCALTB
 A Geant4 simulation of the 2018 CMS HGCAL test-beam for geant-val.
 
+<figure>
+<img src="./images/CEHpion.png" alt="Trulli" style="width:100%">
+<figcaption align="center"><b>Fig. - 20 GeV charged pion interacting in the HGCAL test beam hadronic section.</b></figcaption>
+</figure>
+
+<br/><br/>
+
 <!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary>Table of Contents</summary>
