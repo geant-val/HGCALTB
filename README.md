@@ -139,3 +139,60 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
    ```sh
    condor_ssh_to_job jobid.0
    ```
+
+<!--Geant Val integration-->
+## Geant Val integration
+[Geant Val](https://geant-val.cern.ch/) is the Geant4 testing and validation suite. It is a project hosted on [gitlab.cern.ch](https://gitlab.cern.ch/GeantValidation) used to facilitate the maintenance and validation of Geant4 applications, referred to as <em>tests</em>.\
+The following are instructions to use HGCALTB within Geant Val, from batch submission to website deployment.
+1. **On lxplus**, clone HGCALTB and the Geant Val geant-config-generator
+   ```sh
+   https://github.com/geant-val/HGCALTB.git
+   git clone https://gitlab.cern.ch/GeantValidation/geant-config-generator.git
+   ```
+2. [Follow the build instructions on lxplus](#build-compile-and-execute-on-lxplus)
+3. Copy the HGCALTB geant val scripts into ```tests/geant4/```
+   ```sh
+   cp -r HGCALTB/geantval_scripts/HGCALTB/ geant-config-generator/tests/geant4/
+   mkdir -p geant-config-generator/tests/geant4/HGCALTB/files
+   cp HGCALTB/TBHGCal181Oct.gdml HGCALTBTB/analysis/energy.C geant-config-generator/tests/geant4/HGCALTB/files/
+   ```
+3. We will execute HGCALTB via Geant Val using Geant4.11.2, therefore we must make sure the file ```11.2.sh``` exists in ```configs/geant/```. In the file ```11.2.sh``` we also export the path to the HGCALTB executable (compiled with 11.2). \
+   Copy the config file using:
+   ```sh
+   ./HGCALTB/geantval_scripts/cpconf.sh \
+      HGCALTB/geantval_scripts/configs/11.2.sh \
+      geant-config-generator/configs/geant4/ \
+      $(pwd)/HGCALTB-build
+   ```
+4. Create macros and metadata for Geant Val execution
+   ```sh
+   cd geant-config-generator
+   ./mc-config-generator.py submit -t HGCALTB -d OUTPUT -v 11.2 -q "testmatch" -r
+   ```
+   this command creates the Geant Val files for batch submission using HTCondor under the ```OUTPUT``` folder, using HGCALTB, Geant4.11.2 and the ```testmatch``` job flavor.
+5. To monitor the jobs use
+   ```sh
+   ./mc-config-generator.py status -t HGCALTB -d OUTPUT
+   ```
+   When the job execution ends, the root output files are stored in the corresponding job folder. Each job folder will look like this:
+   ```
+   HGCALTB-env.log  test_stderr.txt  test_stdout.txt
+   HGCALTB.json  HGCALTB.mac HGCALTBout_Run0.root
+   HGCALTB.sh  bsub.sh  config.sh  
+   ```
+6. Execute the analysis on the root files in the `OUTPUT` folder to create Geant Val JSON output files
+   ```sh
+   ./mc-config-generator.py parse -t HGCALTB -d OUTPUT
+   ```
+7. The last part is to deploy the results on Geant Val. The HGCALTB layout on the Geant Val
+   website is defined in the HGCALTB.xml file on [gitlab.com/thegriglat/geant-val-layouts](https://gitlab.com/thegriglat/geant-val-layouts)
+   (additional info are in the tags.json file).
+   Deploy JSON files on the Geant Val database
+   ```sh
+    find . -name '*.json' | while read i; \
+      do curl -H "Content-Type: application/json" -H "token: askauthor" --data @$i https://geant-val.cern.ch/upload; \
+      echo; done
+
+<!--Selected CMS HGCAL test beam references-->
+## Selected CMS HGCAL test beam references
+- 📄 <em>Performance of the CMS High Granularity Calorimeter prototype to charged pion beams of 20−300 GeV/c</em>, [arXiv:2211.04740](https://arxiv.org/abs/2211.04740), 27 May 2023
