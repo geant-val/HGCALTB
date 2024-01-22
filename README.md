@@ -83,3 +83,59 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
    ```sh
    ./HGCALTB -m HGCALTBrun.mac -t 4 -p FTFP_BERT
    ```
+
+### Submit a job with HTCondor on lxplus
+1. [First follow the build instructions on lxplus](#build-compile-and-execute-on-lxplus)
+2. prepare for HTCondor submission (example with Geant4.11.2, HGCALTBrun.mac, 4 threads, FTFP_BERT physics list)
+    ```sh
+    mkdir -p error log output
+    cp ../HGCALTB/scripts/HGCALTB_HTCondor.sub ../HGCALTB/scripts/HGCALTB_HTCondor_11.2.sh .
+    sed -i "2 i cd $(pwd)" HGCALTB_HTCondor_11.2.sh
+    echo ./HGCALTB -m HGCALTBrun.mac -t 4 -p FTFP_BERT >> HGCALTB_HTCondor_11.2.sh
+    sed -i "1 i executable = HGCALTB_HTCondor_11.2.sh" HGCALTB_HTCondor.sub
+    ```
+3. submit a job
+   ```sh
+   condor_submit HGCALTB_HTCondor.sub 
+   ```
+4. monitor the job
+   ```sh
+   condor_q
+   ```
+   or (for persistency)
+   ```sh
+   condor_wait -status log/*.log
+   ```
+5. additional info from HTCondor (optional) \
+   rm all your jobs
+    ```sh
+   condor_rm username
+   ```
+   inspect your accounting group
+   ```sh
+   condor_q owner $LOGNAME -long | grep '^AccountingGroup' | sort | uniq -c
+   ```
+   display all accounting groups
+   ```sh
+   haggis group list
+   ```
+   display your accounting groups
+    ```sh
+   haggis rights
+   ```
+   check what accounting group a job has
+   ```sh
+   condor_q jobid.0 -af AccountingGroup
+   ```
+   specify the accounting group for yout job, to be added in the .sub file
+   ```sh
+   +AccountingGroup = "group_u_*"
+   ```
+   check job CPU usage
+   ```sh
+   condor_q -l jobid.0 | grep CPUsUsage
+   ```
+   ssh to machine where job is running
+   ```sh
+   condor_ssh_to_job jobid.0
+   ```
