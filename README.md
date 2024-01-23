@@ -49,8 +49,12 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
 ## Results
 
 ### Selected reports and presentations
+- [Towards a Geant4 CMS HGCAL validation test](https://indico.cern.ch/event/1370020/contributions/5771288/attachments/2785706/4856878/lopezzot_23_1_2024.pdf), Geant4 simulation bi-weekly meeting, 23 January 2024
 
 ### Available datasets and analyses
+| Dataset | Geant4 | HGCALTB | Comment |
+| :---:   | :---:  | :---:   | :---:   |
+| 0.1_1 | G4-11.2 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL | 0.1 | Produced with geant-val for presentation on 23/1/2024 |
 
 <!--How to-->
 ## How to
