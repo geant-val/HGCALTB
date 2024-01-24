@@ -207,3 +207,4 @@ The following are instructions to use HGCALTB within Geant Val, from batch submi
 <!--Selected CMS HGCAL test beam references-->
 ## Selected CMS HGCAL test beam references
 - 📄 <em>Performance of the CMS High Granularity Calorimeter prototype to charged pion beams of 20−300 GeV/c</em>, [arXiv:2211.04740](https://arxiv.org/abs/2211.04740), 27 May 2023
+- 📄 <em>Response of a CMS HGCAL silicon-pad electromagnetic calorimeter prototype to 20-300 GeV positrons</em>, [arXiv:2111.06855](https://arxiv.org/abs/2111.06855), 31 March 2022
