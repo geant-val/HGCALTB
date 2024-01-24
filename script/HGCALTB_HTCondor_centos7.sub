@@ -1,0 +1,11 @@
+executable = HGCALTB_HTCondor_10.4.sh
+universe = vanilla 
+output = output/job.$(ClusterId).$(ProcId).output 
+error = error/job.$(ClusterId).$(ProcId).error 
+log =  log/job.$(ClusterId).$(ProcId).log 
+RequestCpus = 4
+stream_output = True 
+stream_error = True 
++requirements=(OpSysAndVer=?="CentOS7")
++JobFlavour = "testmatch" 
+queue
