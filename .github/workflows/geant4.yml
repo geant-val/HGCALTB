@@ -1,7 +1,7 @@
-name: Geant4 testing
+name: Call geant-val reusable workflow
 
 on: [push]
+
 jobs:
-  reusable_ci:
-    extends:
-      template: https://github.com/geant-val/geant-val-ci-workflows/blob/main/.github/workflows/geant-val-ci-workflows.yaml
+  call-workflow:
+    uses: https://github.com/geant-val/geant-val-ci-workflows/blob/main/.github/workflows/geant-val-ci-workflows.yaml@main
