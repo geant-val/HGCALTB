@@ -2,8 +2,6 @@ name: Geant4 testing
 
 on: [push]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  reusable_ci:
     extends:
       template: https://github.com/geant-val/geant-val-ci-workflows/blob/main/.github/workflows/geant-val-ci-workflows.yaml
