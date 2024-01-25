@@ -4,4 +4,4 @@ on: [push]
 
 jobs:
   call-workflow:
-    uses: https://github.com/geant-val/geant-val-ci-workflows/blob/main/.github/workflows/geant-val-ci-workflows.yaml@main
+    uses: geant-val/geant-val-ci-workflows/.github/workflows/geant-val-ci-workflows.yaml@main
