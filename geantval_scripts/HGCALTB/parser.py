@@ -23,12 +23,10 @@ class Test(BaseParser):
 
     def parse(self,jobs):
         if jobs[0]['PARTICLE'] == "pi-":
-            print(len(jobs),jobs[0]['PARTICLE'])
             # PION ANALYSIS
             energies = ['20.','50.','80.','100.','120.','200.','250.','300.']
             pionjobs = [job for job in jobs if job['PARTICLE'] == "pi-"]
             physlist = pionjobs[0]['PHYSLIST']
-            print(physlist)
             g4ver = pionjobs[0]['VERSION']
             print('start parsing ' + str(len(pionjobs)) + ' files from Geant4 ' + g4ver + ' using ' + physlist)
             dirName = 'analysis_'+g4ver+'_'+physlist
@@ -210,8 +208,7 @@ class Test(BaseParser):
                 for counter, energy in enumerate(emenergies):
                     if job['ENERGY'] == energy:
                         os.system('cp ' + job['path'] + '/HGCALTBout_Run0.root ' + emdirName + '/HGCALTBout_Run' + str(counter) + '.root')
-                        #os.system('cp ' + job['path'] + '/emprofile.C ' + emdirName)
-                        os.system('cp emprofile.C ' + emdirName)
+                        os.system('cp ' + job['path'] + '/emprofile.C ' + emdirName)
             # run the analysis inside each analysis_* folder
             for counter, e in enumerate(emenergiesnum):
                 emcmnd = ['root', '-l', '-b', '-q', 'emprofile.C("HGCALTBout_Run'+str(counter)+'.root",'+'"'+str(e)+'"'+','+'"'+str(physlist)+'"'+')']
