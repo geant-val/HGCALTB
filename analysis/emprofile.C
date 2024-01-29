@@ -1,18 +1,13 @@
-// Simple macro card to reconstruct longitdunal profiles of en-showers
+// Simple macro card to reconstruct longitdunal profiles of em-showers
 
-void DoAnalysis();
-
-void emprofile()
+void emprofile(const string inFileName = "HGCALTBout_Run0.root", const string Energy = "", const string PhysList = "")
 {
-    DoAnalysis();
-}
-
-void DoAnalysis()
-{
-  const string filename = "50kFTFP_BERT_EMZ_HGCALTBout_Run0.root";
+  const string filename = inFileName;
   cout << "Analysis of " << filename << endl;
   TFile* file = TFile::Open(filename.c_str(), "READ");
   TTree* tree = (TTree*)file->Get("HGCALTBout");
+
+  TFile* outputfile(TFile::Open(("EmProf"+Energy+"_"+PhysList+".root").c_str(), "RECREATE"));
 
   double CEETot{0.};
   tree->SetBranchAddress("CEETot", &CEETot);
@@ -65,8 +60,9 @@ void DoAnalysis()
   TGraph grFullEmProfile(layersNo, fulllayers.data(), fullemprofile.data());
   grFullEmProfile.SetTitle("FullEmProfile");
   grFullEmProfile.SetName("FullEmProfile");
+  grFullEmProfile.GetXaxis()->SetTitle("Layer");
+  grFullEmProfile.GetYaxis()->SetTitle("Measured energy [MIP]");
  
-  TFile* outputfile(TFile::Open("HGCALTBemprofile.root", "RECREATE"));
   outputfile->cd();
   grEmProfile.Write();
   grFullEmProfile.Write();
