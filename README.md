@@ -166,7 +166,7 @@ The following are instructions to use HGCALTB within Geant Val, from batch submi
    ```sh
    cp -r HGCALTB/geantval_scripts/HGCALTB/ geant-config-generator/tests/geant4/
    mkdir -p geant-config-generator/tests/geant4/HGCALTB/files
-   cp HGCALTB/TBHGCal181Oct.gdml HGCALTBTB/analysis/energy.C geant-config-generator/tests/geant4/HGCALTB/files/
+   cp HGCALTB/TBHGCal181Oct.gdml HGCALTBTB/analysis/energy.C HGCALTBTB/analysis/emprofile.C geant-config-generator/tests/geant4/HGCALTB/files/
    ```
 3. We will execute HGCALTB via Geant Val using Geant4.11.2, therefore we must make sure the file ```11.2.sh``` exists in ```configs/geant/```. In the file ```11.2.sh``` we also export the path to the HGCALTB executable (compiled with 11.2). \
    Copy the config file using:
