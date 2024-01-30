@@ -226,7 +226,7 @@ class Test(BaseParser):
                     targetName='CMS-HGCAL',
                     beamParticle='e+',
                     beamEnergies=e,
-                    observableName='Em-shower longitudinal profile',
+                    observableName='Longitudinal Shower Profile',
                     xAxisName=fullemprof.GetXaxis().GetTitle(),
                     yAxisName=fullemprof.GetYaxis().GetTitle(),
                     xValues=list(fullemprof.GetX()),
