@@ -43,10 +43,13 @@ class HGCALTBCEEHit : public G4VHit
 
     // return a copy of the fCEESignals array
     //
-    std::array<G4double, HGCALTBConstants::CEECells+1> GetCEESignals() const { return fCEESignals; }
+    std::array<G4double, HGCALTBConstants::CEECells + 1> GetCEESignals() const
+    {
+      return fCEESignals;
+    }
 
   private:
-    std::array<G4double, HGCALTBConstants::CEECells+1> fCEESignals;
+    std::array<G4double, HGCALTBConstants::CEECells + 1> fCEESignals;
 };
 
 using HGCALTBCEEHitsCollection = G4THitsCollection<HGCALTBCEEHit>;
