@@ -225,7 +225,7 @@ class Test(BaseParser):
                     mctool_model=physlist,
                     targetName='CMS-HGCAL',
                     beamParticle='e+',
-                    beamEnergies=e,
+                    beamEnergies=[e],
                     observableName='Longitudinal Shower Profile',
                     xAxisName=fullemprof.GetXaxis().GetTitle(),
                     yAxisName=fullemprof.GetYaxis().GetTitle(),
