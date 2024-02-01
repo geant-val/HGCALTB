@@ -36,6 +36,10 @@ HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction)
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetNtupleMerging(1);
 
+#if G4VERSION_NUMBER > 1050 && G4VERSION_NUMBER < 1060
+  analysisManager->SetNtupleRowWise(false);
+#endif
+
   analysisManager->CreateNtuple("HGCALTBout", "HGCALTBoutput");
   analysisManager->CreateNtupleDColumn("edep");
   analysisManager->CreateNtupleDColumn("CEETot");
