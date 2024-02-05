@@ -44,15 +44,30 @@ class HGCALTBAHCALSD : public G4VSensitiveDetector
   private:
     HGCALTBAHCALHitsCollection* fHitsCollection;
     inline G4int MapTileCpNo(G4int cpno) const;
-    inline G4double ApplyBirk(G4double edep, G4double stepl) const;
+    inline G4double ApplyBirk(const G4Step* aStep) const;
 };
 
-inline G4double HGCALTBAHCALSD::ApplyBirk(G4double edep, G4double stepl) const
+inline G4double HGCALTBAHCALSD::ApplyBirk(const G4Step* aStep) const
 {
-  const G4double kBirk = 0.126;  // mm/MeV (to be confirmed)
-  G4double newe = ((edep / stepl) / (1. + kBirk * (edep / stepl))) * stepl;
-  if (newe > edep) newe = edep;
-  return newe;
+  // from https://github.com/cms-sw/cmssw/blob/master/SimG4CMS/Calo/src/CaloSD.cc#L727
+  double weight = 1.;
+  double charge = aStep->GetPreStepPoint()->GetCharge();
+  double length = aStep->GetStepLength();
+  double edep = aStep->GetTotalEnergyDeposit();
+  double birk1 = 0.0052;
+  double birk2 = 0.142;
+  double birk3 = 1.75;
+
+  if (charge != 0. && length > 0.) {
+    double density = aStep->GetPreStepPoint()->GetMaterial()->GetDensity();
+    double dedx = aStep->GetTotalEnergyDeposit() / length;
+    double rkb = birk1 / density;
+    double c = birk2 * rkb * rkb;
+    if (std::abs(charge) >= 2.) rkb /= birk3;  // based on alpha particle data
+    weight = 1. / (1. + rkb * dedx + c * dedx * dedx);
+  }
+
+  return edep * weight;
 }
 
 inline G4int HGCALTBAHCALSD::MapTileCpNo(G4int cpno) const
