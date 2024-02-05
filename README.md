@@ -55,7 +55,8 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
 ### Available datasets and analyses
 | Dataset | Geant4 | HGCALTB | Comment |
 | :---:   | :---:  | :---:   | :---:   |
-| 0.1_1 | G4-11.2 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL | 0.1 | Produced with geant-val for presentation on 23/1/2024 |
+| 0.2_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 0.2 | Produced with geant-val, replaces all previous results on geant-val. |
+| 0.1_1 | G4-11.2 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL | 0.1 | Produced with geant-val for presentation on 23/1/2024. Removed from geant-val on 4/2/2023. |
 
 <!--How to-->
 ## How to
