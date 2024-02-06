@@ -59,6 +59,10 @@ void HGCALTBCEESD::Initialize(G4HCofThisEvent* hce)
 //
 G4bool HGCALTBCEESD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
+  // Apply time cut
+  //
+  if (aStep->GetTrack()->GetGlobalTime() > HGCALTBConstants::TimeCut) return false;
+
   // Get CEE layer ID
   //
   auto CEELayerID = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(2) - 1) / 3;

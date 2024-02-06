@@ -57,6 +57,10 @@ void HGCALTBAHCALSD::Initialize(G4HCofThisEvent* hce)
 //
 G4bool HGCALTBAHCALSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
+  // Apply time cut
+  //
+  if (aStep->GetTrack()->GetGlobalTime() > HGCALTBConstants::TimeCut) return false;
+
   // Get CHE layer ID
   //
   auto AHCALLayerID = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1) - 1;

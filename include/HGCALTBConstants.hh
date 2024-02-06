@@ -21,6 +21,9 @@
 namespace HGCALTBConstants
 {
 
+// Time cut
+constexpr G4double TimeCut = 500.;  // ns
+
 // HGCALCEE constants
 //
 
