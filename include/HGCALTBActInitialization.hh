@@ -12,16 +12,20 @@
 
 // Includers from Geant4
 //
+#  include "G4String.hh"
 #  include "G4VUserActionInitialization.hh"
 
 class HGCALTBActInitialization : public G4VUserActionInitialization
 {
   public:
-    HGCALTBActInitialization();
+    HGCALTBActInitialization(G4String filename);
     virtual ~HGCALTBActInitialization();
     // vitual methods from base class
     virtual void BuildForMaster() const;
     virtual void Build() const;
+
+  private:
+    G4String fFileName;
 };
 
 #endif  // HGCALTBActInitialization_h

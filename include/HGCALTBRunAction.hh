@@ -25,7 +25,7 @@ class G4Run;
 class HGCALTBRunAction : public G4UserRunAction
 {
   public:
-    HGCALTBRunAction(HGCALTBEventAction* eventAction);
+    HGCALTBRunAction(HGCALTBEventAction* eventAction, G4String filename);
     virtual ~HGCALTBRunAction();
     // virtual methods from base class
     virtual void BeginOfRunAction(const G4Run*);
@@ -33,6 +33,7 @@ class HGCALTBRunAction : public G4UserRunAction
 
   private:
     HGCALTBEventAction* fEventAction;
+    G4String fFileName;
 };
 
 #endif  // HGCALTBRunAction_h 1

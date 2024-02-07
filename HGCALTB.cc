@@ -38,6 +38,7 @@ void PrintHelp()
          << "  -u UISESSION    string of the Geant4 UI session to use\n"
          << "  -t THREADS      number of threads to use in the simulation\n"
          << "  -p PHYSICSLIST  string of the physics list to use\n"
+         << "  -f FILENAME     optional string with custom file name\n"
          << "  -h              print this help and exit\n"
          << G4endl;
 }
@@ -63,6 +64,7 @@ int main(int argc, char** argv)
   G4String macro;
   G4String session;
   G4String custom_pl = "FTFP_BERT";  // default physics list
+  G4String custom_filename = "";  // default file name selected by RunAction
 #ifdef G4MULTITHREADED
   G4int nThreads = G4Threading::G4GetNumberOfCores();
 #endif
@@ -75,6 +77,8 @@ int main(int argc, char** argv)
       session = argv[i + 1];
     else if (G4String(argv[i]) == "-p")
       custom_pl = argv[i + 1];
+    else if (G4String(argv[i]) == "-f")
+      custom_filename = argv[i + 1];
 #ifdef G4MULTITHREADED
     else if (G4String(argv[i]) == "-t") {
       nThreads = G4UIcommand::ConvertToInt(argv[i + 1]);
@@ -121,7 +125,7 @@ int main(int argc, char** argv)
 
   runManager->SetUserInitialization(new HGCALTBDetConstruction());
 
-  runManager->SetUserInitialization(new HGCALTBActInitialization());
+  runManager->SetUserInitialization(new HGCALTBActInitialization(custom_filename));
 
   // Visualization manager construction
   //
