@@ -41,7 +41,8 @@ constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 126
 constexpr G4double CEEThreshold = 0.5;  // MIP
 
 // CEE noise
-constexpr G4double CEENoiseSigma = 0.05;  // MIP
+// intrinsic noise - https://arxiv.org/pdf/2012.06336.pdf fig. 22
+constexpr G4double CEENoiseSigma = 0.12;  // MIP
 
 // HGCALCHE constants
 //
