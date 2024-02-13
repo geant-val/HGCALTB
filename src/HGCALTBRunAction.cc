@@ -26,8 +26,8 @@
 
 // Constructor and de-constructor
 //
-HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction)
-  : G4UserRunAction(), fEventAction(eventAction)
+HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction, G4String filename)
+  : G4UserRunAction(), fEventAction(eventAction), fFileName(filename)
 {
   G4RunManager::GetRunManager()->SetPrintProgress(1);  // print each event number
 
@@ -71,9 +71,16 @@ void HGCALTBRunAction::BeginOfRunAction(const G4Run* Run)
   // G4RunManager::GetRunManager()->SetRandomNumberStore( true );
 
   auto analysisManager = G4AnalysisManager::Instance();
+  G4String outputfile;
 
-  std::string runnumber = std::to_string(Run->GetRunID());
-  G4String outputfile = "HGCALTBout_Run" + runnumber + ".root";
+  if (fFileName.empty()) {
+    std::string runnumber = std::to_string(Run->GetRunID());
+    outputfile = "HGCALTBout_Run" + runnumber + ".root";
+  }
+  else {
+    outputfile = fFileName;
+  }
+
   analysisManager->OpenFile(outputfile);
 }
 

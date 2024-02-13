@@ -57,6 +57,10 @@ void HGCALTBAHCALSD::Initialize(G4HCofThisEvent* hce)
 //
 G4bool HGCALTBAHCALSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
+  // Apply time cut
+  //
+  if (aStep->GetTrack()->GetGlobalTime() > HGCALTBConstants::TimeCut) return false;
+
   // Get CHE layer ID
   //
   auto AHCALLayerID = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1) - 1;
@@ -74,11 +78,11 @@ G4bool HGCALTBAHCALSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // Access the corresponding hit
   //
   auto hit = (*fHitsCollection)[AHCALLayerID];
-  auto edep = aStep->GetTotalEnergyDeposit();
   auto stepl = aStep->GetStepLength();
   auto charge = aStep->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGCharge();
+  auto edep = aStep->GetTotalEnergyDeposit();
   if (stepl > 0. && charge != 0) {
-    edep = ApplyBirk(edep, stepl);
+    edep *= GetBirk(aStep);
   }
   hit->AddTileEdep(TileID, edep);
 
