@@ -23,6 +23,9 @@
 #  include "G4AnalysisManager.hh"
 #endif
 #include <string>
+#ifdef USE_CELERITAS
+#include "Celeritas.hh"
+#endif
 
 // Constructor and de-constructor
 //
@@ -82,10 +85,20 @@ void HGCALTBRunAction::BeginOfRunAction(const G4Run* Run)
   }
 
   analysisManager->OpenFile(outputfile);
+
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().BeginOfRunAction(Run);
+#endif
 }
 
-void HGCALTBRunAction::EndOfRunAction(const G4Run*)
+void HGCALTBRunAction::EndOfRunAction(const G4Run* Run)
 {
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().EndOfRunAction(Run);
+#else
+  (void)sizeof(Run);
+#endif
+
   auto analysisManager = G4AnalysisManager::Instance();
 
   analysisManager->Write();
