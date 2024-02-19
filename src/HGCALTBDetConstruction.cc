@@ -18,6 +18,7 @@
 // Includers from Geant4
 //
 #include "G4GDMLParser.hh"
+#include "G4GeomTestVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4SDManager.hh"
@@ -40,6 +41,8 @@ G4VPhysicalVolume* HGCALTBDetConstruction::Construct()
   G4GDMLParser Parser;
   Parser.Read("TBHGCal181Oct.gdml", false);
   auto worldPV = Parser.GetWorldVolume();
+
+  CheckOverlaps(worldPV);
 
   DefineVisAttributes();
 
@@ -147,10 +150,20 @@ void HGCALTBDetConstruction::DefineVisAttributes()
       volume->SetVisAttributes(G4VisAttributes::GetInvisible());
     if (isSubstring(volume->GetName(), "HGCalHESiliconSensitive"))
       volume->SetVisAttributes(SiWaferVisAttr);
-    // che
+    // ahcal
     if (volume->GetName() == "HGCalAH") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
     if (isSubstring(volume->GetName(), "AHcalTileSensitive")) volume->SetVisAttributes(TileVisAttr);
   }
+}
+
+// CheckOverlaps() private method
+//
+void HGCALTBDetConstruction::CheckOverlaps(G4VPhysicalVolume* PhysVol)
+{
+  G4cout << "-->CheckingOverlaps for volumes in " << PhysVol->GetName() << G4endl;
+  // volume, tolerance, npoints, verbosity
+  G4GeomTestVolume* testVolume = new G4GeomTestVolume(PhysVol, 0.0, 100000, true);
+  testVolume->TestOverlapInTree();
 }
 
 //**************************************************

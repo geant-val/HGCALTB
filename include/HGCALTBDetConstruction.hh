@@ -26,6 +26,7 @@ class HGCALTBDetConstruction : public G4VUserDetectorConstruction
 
   private:
     void DefineVisAttributes();
+    void CheckOverlaps(G4VPhysicalVolume* PhysVol);
 };
 
 #endif  // HGCALTBDetConstruction_h
