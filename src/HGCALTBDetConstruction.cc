@@ -24,6 +24,11 @@
 #include "G4SDManager.hh"
 #include "G4VisAttributes.hh"
 
+#include "G4Region.hh"
+#include "G4RegionStore.hh"
+#include "G4ProductionCuts.hh"
+#include "G4ProductionCutsTable.hh"
+
 // Includers from std
 //
 #include <string>

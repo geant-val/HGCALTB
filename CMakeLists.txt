@@ -27,6 +27,12 @@ else()
   find_package(Geant4 REQUIRED)
 endif()
 
+if(USE_ADEPT)
+  # Find AdePT
+  find_package(AdePT)
+  add_compile_definitions(USE_ADEPT)
+endif()
+
 #----------------------------------------------------------------------------
 # Output pedantic warnings
 #
@@ -44,15 +50,26 @@ include(${Geant4_USE_FILE})
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
                     ${Geant4_INCLUDE_DIR}
-		    ${FLUKAInterface_INCLUDE_DIR})
+                    ${FLUKAInterface_INCLUDE_DIR})
+if(USE_ADEPT)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/adept_integration/include ${AdePT_INCLUDE_DIRS})
+endif()
+
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+if(USE_ADEPT)
+  list(APPEND sources ${PROJECT_SOURCE_DIR}/adept_integration/src/FTFP_BERT_AdePT.cc)
+  list(APPEND headers ${PROJECT_SOURCE_DIR}/adept_integration/include/FTFP_BERT_AdePT.hh)
+endif()
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(HGCALTB HGCALTB.cc ${sources} ${headers})
 target_link_libraries(HGCALTB ${Geant4_LIBRARIES} ${FLUKAInterface_LIBRARIES})
+if(USE_ADEPT)
+  target_link_libraries(HGCALTB ${AdePT_LIBRARIES})
+endif()
 set_target_properties(HGCALTB PROPERTIES CXX_STANDARD 17)
 
 #----------------------------------------------------------------------------
@@ -68,6 +85,9 @@ set(HGCALTB_SCRIPTS
     HGCALTBrun.mac
     HGCALTBfullrun.mac
   )
+if(USE_ADEPT)
+list(APPEND HGCALTB_SCRIPTS HGCALTBrun_adept.mac HGCALTBfullrun_adept.mac)
+endif()
 
 foreach(_script ${HGCALTB_SCRIPTS})
   configure_file(
