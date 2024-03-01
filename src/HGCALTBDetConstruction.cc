@@ -28,6 +28,9 @@
 //
 #include <string>
 
+// Preprocessor macros
+// #define CHECKOVERLAPS
+
 // Constructors and de-constructor
 //
 HGCALTBDetConstruction::HGCALTBDetConstruction() : G4VUserDetectorConstruction() {}
@@ -42,7 +45,9 @@ G4VPhysicalVolume* HGCALTBDetConstruction::Construct()
   Parser.Read("TBHGCal181Oct.gdml", false);
   auto worldPV = Parser.GetWorldVolume();
 
+#ifdef CHECKOVERLAPS
   CheckOverlaps(worldPV);
+#endif
 
   DefineVisAttributes();
 
