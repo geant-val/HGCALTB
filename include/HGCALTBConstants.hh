@@ -63,6 +63,15 @@ constexpr G4int CHEHexLayer = 7;
 // CHE (small) silicon cells per big hexagon (layer)
 constexpr G4int CHECells = CHEHexLayer * (CHECellMaxCpNo - CHECellMinCpNo);  // 7*126=882
 
+// Small silicon cell constants
+//
+
+// small hexagon apothem
+constexpr G4double SCApothem = 0.56227272727272 * cm;  // from gdml file
+
+// small hexagon radius
+constexpr G4double SCRadius = SCApothem * 2. / 1.7320508;  // apothem *2 / sqrt(3)
+
 // AHCAL constants
 //
 
