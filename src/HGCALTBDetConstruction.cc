@@ -75,7 +75,15 @@ void HGCALTBDetConstruction::ConstructSDandField()
       G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CEESD);
     }
+    if (volume->GetName() == "HGCalEECellCoarseHalf") {
+      G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CEESD);
+    }
     if (volume->GetName() == "HGCalHECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CHESD);
+    }
+    if (volume->GetName() == "HGCalHECellCoarseHalf") {
       G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CHESD);
     }

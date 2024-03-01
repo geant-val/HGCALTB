@@ -30,12 +30,12 @@ constexpr G4double TimeCut = 500.;  // ns
 // CEE longitudinal layers (one big hexagon per layer)
 constexpr G4int CEELayers = 28;
 
-// CEE copynumbers for HGCalEECellCoarse (exluding HGCALEECellCoarseHalf)
-constexpr G4int CEECellMinCpNo = 2003;
-constexpr G4int CEECellMaxCpNo = 2129;
+// CEE copynumbers for HGCalEECellCoarse (including HGCALEECellCoarseHalf)
+constexpr G4int CEECellMinCpNo = 2000;
+constexpr G4int CEECellMaxCpNo = 2132;
 
 // CEE (small) silicon cells per big hexagon (layer)
-constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 126
+constexpr G4int CEECells = CEECellMaxCpNo - CEECellMinCpNo;  // 132
 
 // CEE Threshold
 constexpr G4double CEEThreshold = 0.5;  // MIP
@@ -53,15 +53,15 @@ constexpr G4int CHELayers = 12;
 // CHE longitudinal layers with 7 silicon wafers
 constexpr G4int CHESevenWaferLayers = 9;
 
-// CHE copynumbers for HGCalHECellCoarse (exluding HGCALHECellCoarseHalf)
-constexpr G4int CHECellMinCpNo = 2003;
-constexpr G4int CHECellMaxCpNo = 2129;
+// CHE copynumbers for HGCalHECellCoarse (including HGCALHECellCoarseHalf)
+constexpr G4int CHECellMinCpNo = 2000;
+constexpr G4int CHECellMaxCpNo = 2132;
 
 // CHE big hexagons per layer
 constexpr G4int CHEHexLayer = 7;
 
 // CHE (small) silicon cells per big hexagon (layer)
-constexpr G4int CHECells = CHEHexLayer * (CHECellMaxCpNo - CHECellMinCpNo);  // 7*126=882
+constexpr G4int CHECells = CHEHexLayer * (CHECellMaxCpNo - CHECellMinCpNo);  // 7*132=924
 
 // Small silicon cell constants
 //
