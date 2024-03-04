@@ -19,6 +19,8 @@
 #  include <array>
 #  include <numeric>
 
+// #  define DEBUGHELPER
+
 class HGCALTBSignalHelper
 {
   public:
@@ -30,10 +32,12 @@ class HGCALTBSignalHelper
     // Get layer with nuclear interaction (using 3 layers)
     G4bool IsInteraction(const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer1,
                          const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2,
-                         const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer3) const;
+                         const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer3,
+                         const G4double PrimaryEnergy) const;
     // Get layer with nuclear interaction (using 2 layers)
     G4bool IsInteraction(const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer1,
-                         const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2) const;
+                         const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2,
+                         const G4double PrimaryEnergy) const;
 
   private:
     // Return x-coordinate of small Si cell in mm from copy number
@@ -45,6 +49,9 @@ class HGCALTBSignalHelper
     // Compute signal in radius
     G4double ComputeSignalRadius(const std::array<G4double, HGCALTBConstants::CEECells + 1> Signals,
                                  const G4double Radius) const;
+    // Get threshold for tagging pion nuclear interaction (from CMS paper)
+    // goes from 12 to 40 MIPs, from 20 to 200 GeV pions
+    G4int ComputeLayerThreshold(const G4double PrimaryEnergy) const;
 };
 
 inline G4double HGCALTBSignalHelper::GetSiCellX(const G4int CpNo) const
@@ -108,11 +115,18 @@ inline G4double HGCALTBSignalHelper::ComputeSignalRadius(
 inline G4bool HGCALTBSignalHelper::IsInteraction(
   const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer1,
   const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2,
-  const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer3) const
+  const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer3,
+  const G4double PrimaryEnergy) const
 {
-  if (ComputeSignalRadius(Layer1, 100) < 12) {
+#  ifdef DEBUGHELPER
+  G4cout << "PrimaryEnergy " << PrimaryEnergy << " Threshold "
+         << ComputeLayerThreshold(PrimaryEnergy) << " SignalRadius 10 cm "
+         << ComputeSignalRadius(Layer1, 100) << G4endl;
+#  endif
+
+  if (ComputeSignalRadius(Layer1, 100) < ComputeLayerThreshold(PrimaryEnergy)) {
     return false;
-  }  // 10 cm, 12 MIPs
+  }  // 10 cm
 
   G4double RLayer = (ComputeSignalRadius(Layer1, 20) + ComputeSignalRadius(Layer2, 20)
                      + ComputeSignalRadius(Layer3, 20))
@@ -129,11 +143,18 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
 
 inline G4bool HGCALTBSignalHelper::IsInteraction(
   const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer1,
-  const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2) const
+  const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2,
+  const G4double PrimaryEnergy) const
 {
-  if (ComputeSignalRadius(Layer1, 100) < 12) {
+#  ifdef DEBUGHELPER
+  G4cout << "PrimaryEnergy " << PrimaryEnergy << " Threshold "
+         << ComputeLayerThreshold(PrimaryEnergy) << " SignalRadius 10 cm "
+         << ComputeSignalRadius(Layer1, 100) << G4endl;
+#  endif
+
+  if (ComputeSignalRadius(Layer1, 100) < ComputeLayerThreshold(PrimaryEnergy)) {
     return false;
-  }  // 10 cm, 12 MIPs
+  }  // 10 cm
 
   G4double RLayer = (ComputeSignalRadius(Layer1, 20) + ComputeSignalRadius(Layer2, 20))
                     / (ComputeSignalRadius(Layer1, 100) + ComputeSignalRadius(Layer2, 100));
@@ -144,6 +165,16 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
   else {
     return true;
   }
+}
+
+inline G4int HGCALTBSignalHelper::ComputeLayerThreshold(const G4double PrimaryEnergy) const
+{
+  auto Energy = static_cast<int>(PrimaryEnergy * GeV);  // from MeV to GeV
+  if (Energy <= 20) return 12;  // MIPs
+
+  auto Threshold = 12 + (Energy - 20) * (28 / 180);  // goes from 12 to 40 MIPs from 20 to 200 GeV
+
+  return Threshold;
 }
 
 #endif  // HGCALTBSignalHelper_h 1

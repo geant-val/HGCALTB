@@ -146,11 +146,44 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
       return partialsum;
   };
 
+  // Signal helper class
+  HGCALTBSignalHelper SgnlHelper;
+  // CEE layer of pion interaction
+  G4int CEEIntLayer{99};
+  // CEE nuclear interaction found
+  G4bool CEENclInteraction{false};
+
   for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
     auto CEESignals = (*CEEHC)[i]->GetCEESignals();
     G4double CEELayerSignal =
       std::accumulate(CEESignals.begin(), CEESignals.end(), 0., ApplyHGCALCut);
     fCEELayerSignals[i] = CEELayerSignal;
+
+    // Tag pion interaction layer in CEE
+    //
+    if (!CEENclInteraction) {  // pion has not interacted yet
+      if (i <= 25) {
+        if (!(SgnlHelper.IsInteraction((*CEEHC)[i]->GetCEESignals(),
+                                       (*CEEHC)[i + 1]->GetCEESignals(),
+                                       (*CEEHC)[i + 2]->GetCEESignals(),
+                                       fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CEENclInteraction = true;
+          CEEIntLayer = i;
+        }
+      }
+      else if (i < 27) {
+        if (!(SgnlHelper.IsInteraction((*CEEHC)[i]->GetCEESignals(),
+                                       (*CEEHC)[i + 1]->GetCEESignals(),
+                                       fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CEENclInteraction = true;
+          CEEIntLayer = i;
+        }
+      }
+    }  // end of CEE pion interaction tagging
   }
 
   // CHE Hits
@@ -214,6 +247,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   analysisManager->FillNtupleIColumn(
     6, fPrimaryGenAction->GetParticleGun()->GetParticleDefinition()->GetPDGEncoding());
   analysisManager->FillNtupleDColumn(7, fPrimaryGenAction->GetParticleGun()->GetParticleEnergy());
+  analysisManager->FillNtupleIColumn(8, CEEIntLayer);
   analysisManager->AddNtupleRow();
 }
 
