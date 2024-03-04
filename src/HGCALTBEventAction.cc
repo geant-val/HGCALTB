@@ -28,6 +28,7 @@
 #else
 #  include "G4AnalysisManager.hh"
 #endif
+#include "G4ParticleGun.hh"
 #include "G4SDManager.hh"
 
 // Includers from std
@@ -36,6 +37,14 @@
 
 // constructor and de-constructor
 //
+HGCALTBEventAction::HGCALTBEventAction(HGCALTBPrimaryGenAction* PGA)
+  : G4UserEventAction(), edep(0.), fIntLayer(0), fPrimaryGenAction(PGA)
+{
+  fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
+  fCHELayerSignals = std::vector<G4double>(HGCALTBConstants::CHELayers, 0.);
+  fAHCALLayerSignals = std::vector<G4double>(HGCALTBConstants::AHCALLayers, 0.);
+}
+
 HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.), fIntLayer(0)
 {
   fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
@@ -202,6 +211,9 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   analysisManager->FillNtupleDColumn(3, AHCALTot);
   analysisManager->FillNtupleDColumn(4, HGCALTot);
   analysisManager->FillNtupleIColumn(5, fIntLayer);
+  analysisManager->FillNtupleIColumn(
+    6, fPrimaryGenAction->GetParticleGun()->GetParticleDefinition()->GetPDGEncoding());
+  analysisManager->FillNtupleDColumn(7, fPrimaryGenAction->GetParticleGun()->GetParticleEnergy());
   analysisManager->AddNtupleRow();
 }
 
