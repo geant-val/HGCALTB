@@ -72,6 +72,30 @@ constexpr G4double SCApothem = 0.56227272727272 * cm;  // from gdml file
 // small hexagon radius
 constexpr G4double SCRadius = SCApothem * 2. / 1.7320508;  // apothem *2 / sqrt(3)
 
+// small hexagon x-pitch
+constexpr G4double SCXPitch = SCRadius + SCApothem / 2.;  // cell-to-cell x pitch (mm)
+
+// small hexagon y-pitch
+constexpr G4double SCYPitch = SCApothem;  // cell-to-cell y pitch (mm)
+
+// column number in small cells (to determine x position)
+constexpr std::array<G4int, CEECells + 1> CellColumn{
+  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,  3,
+  3,  3,  3,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  5,  5,  5,  5,  5,  5,  5,  5,
+  5,  5,  5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  7,  7,  7,  7,  7,  7,  7,  7,
+  7,  7,  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  9,  9,  9,  9,  9,  9,  9,  9,
+  9,  9,  9,  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11,
+  11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 14, 14};
+
+// column number in small cells (to determine y position)
+constexpr std::array<G4int, CEECells + 1> CellRow{
+  10, 12, 7,  9, 11, 13, 15, 4,  6,  8,  10, 12, 14, 16, 18, 1,  3,  5, 7, 9, 11, 13, 15,
+  17, 19, 21, 0, 2,  4,  6,  8,  10, 12, 14, 16, 18, 20, 22, 1,  3,  5, 7, 9, 11, 13, 15,
+  17, 19, 21, 0, 2,  4,  6,  8,  10, 12, 14, 16, 18, 20, 22, 1,  3,  5, 7, 9, 11, 13, 15,
+  17, 19, 21, 0, 2,  4,  6,  8,  10, 12, 14, 16, 18, 20, 22, 1,  3,  5, 7, 9, 11, 13, 15,
+  17, 19, 21, 0, 2,  4,  6,  8,  10, 12, 14, 16, 18, 20, 22, 1,  3,  5, 7, 9, 11, 13, 15,
+  17, 19, 21, 4, 6,  8,  10, 12, 14, 16, 18, 7,  9,  11, 13, 15, 10, 12};
+
 // AHCAL constants
 //
 

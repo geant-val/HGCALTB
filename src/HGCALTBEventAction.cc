@@ -15,6 +15,7 @@
 #include "HGCALTBCEESD.hh"
 #include "HGCALTBCHESD.hh"
 #include "HGCALTBRunAction.hh"
+#include "HGCALTBSignalHelper.hh"
 
 // Includers from Geant4
 //
