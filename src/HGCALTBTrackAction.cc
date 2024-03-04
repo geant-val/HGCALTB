@@ -20,6 +20,9 @@
 #include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 #include "G4Track.hh"
+#ifdef USE_CELERITAS
+#include "Celeritas.hh"
+#endif
 
 // Includers from std
 //
@@ -35,7 +38,11 @@ HGCALTBTrackAction::~HGCALTBTrackAction() {}
 
 // PreUserTrackingAction definition
 //
-void HGCALTBTrackAction::PreUserTrackingAction(const G4Track* /*aTrack*/) {}
+void HGCALTBTrackAction::PreUserTrackingAction(const G4Track* aTrack) {
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().PreUserTrackingAction(const_cast<G4Track*>(aTrack));
+#endif
+}
 
 // PostUserTrackingAction definition
 //

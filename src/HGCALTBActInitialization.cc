@@ -16,6 +16,9 @@
 #include "HGCALTBRunAction.hh"
 #include "HGCALTBStepAction.hh"
 #include "HGCALTBTrackAction.hh"
+#ifdef USE_CELERITAS
+#include "Celeritas.hh"
+#endif
 
 // Constructor and de-constructor
 //
@@ -31,10 +34,18 @@ void HGCALTBActInitialization::BuildForMaster() const
 {
   auto EventAction = new HGCALTBEventAction();
   SetUserAction(new HGCALTBRunAction(EventAction, fFileName));
+
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().BuildForMaster(&CelerSetupOptions(), &CelerSharedParams());
+#endif
 }
 
 void HGCALTBActInitialization::Build() const
 {
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().Build(&CelerSetupOptions(), &CelerSharedParams(), &CelerLocalTransporter());
+#endif
+
   auto PrimaryGenAction = new HGCALTBPrimaryGenAction();
   auto EventAction = new HGCALTBEventAction();
   SetUserAction(PrimaryGenAction);

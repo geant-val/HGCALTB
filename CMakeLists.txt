@@ -27,6 +27,16 @@ else()
   find_package(Geant4 REQUIRED)
 endif()
 
+option(WITH_CELERITAS "Build with Celeritas support" OFF)
+if(WITH_CELERITAS)
+  find_package(Celeritas 0.4.1 REQUIRED)
+  if(NOT CELERITAS_USE_Geant4 OR CELERITAS_CORE_GEO STREQUAL "ORANGE")
+    message(SEND_ERROR "This example requires Geant4 and VecGeom support "
+      "to be enabled in Celeritas")
+  endif()
+  include(CeleritasLibrary)
+endif()
+
 #----------------------------------------------------------------------------
 # Output pedantic warnings
 #
@@ -45,7 +55,25 @@ include(${Geant4_USE_FILE})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
                     ${Geant4_INCLUDE_DIR}
 		    ${FLUKAInterface_INCLUDE_DIR})
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+set(sources
+  src/HGCALTBAHCALSD.cc
+  src/HGCALTBAHHit.cc
+  src/HGCALTBActInitialization.cc
+  src/HGCALTBCEEHit.cc
+  src/HGCALTBCEESD.cc
+  src/HGCALTBCHEHit.cc
+  src/HGCALTBCHESD.cc
+  src/HGCALTBDetConstruction.cc
+  src/HGCALTBEventAction.cc
+  src/HGCALTBPrimaryGenAction.cc
+  src/HGCALTBRunAction.cc
+  src/HGCALTBStepAction.cc
+  src/HGCALTBTrackAction.cc
+)
+
+if(WITH_CELERITAS)
+  list(APPEND sources src/Celeritas.cc)
+endif()
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 #----------------------------------------------------------------------------
@@ -54,6 +82,11 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 add_executable(HGCALTB HGCALTB.cc ${sources} ${headers})
 target_link_libraries(HGCALTB ${Geant4_LIBRARIES} ${FLUKAInterface_LIBRARIES})
 set_target_properties(HGCALTB PROPERTIES CXX_STANDARD 17)
+if(WITH_CELERITAS)
+  celeritas_target_link_libraries(HGCALTB Celeritas::accel)
+  # TODO: no target_compile_definitions ?
+  celeritas_target_compile_options(HGCALTB PRIVATE "-DUSE_CELERITAS")
+endif()
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
