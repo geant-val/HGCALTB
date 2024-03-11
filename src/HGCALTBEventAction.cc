@@ -146,6 +146,16 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
       return partialsum;
   };
 
+  // auxiliary lambda function that takes an std::array of signals in big Si wafer
+  // and returns a same-sized std::array with entries calibrated at MIP scale
+  auto ApplyMIPCalib = [](const std::array<G4double, HGCALTBConstants::CEECells + 1>& Signals) {
+    std::array<G4double, HGCALTBConstants::CEECells + 1> CalibSignals = {0.};
+    for (std::size_t i = 0; i < CalibSignals.size(); i++) {
+      CalibSignals[i] = Signals[i] / HGCALTBConstants::MIPSilicon;
+    }
+    return CalibSignals;
+  };
+
   // Signal helper class
   HGCALTBSignalHelper SgnlHelper;
   // CEE layer of pion interaction
@@ -163,9 +173,9 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     //
     if (!CEENclInteraction) {  // pion has not interacted yet
       if (i <= 25) {
-        if (!(SgnlHelper.IsInteraction((*CEEHC)[i]->GetCEESignals(),
-                                       (*CEEHC)[i + 1]->GetCEESignals(),
-                                       (*CEEHC)[i + 2]->GetCEESignals(),
+        if (!(SgnlHelper.IsInteraction(ApplyMIPCalib((*CEEHC)[i]->GetCEESignals()),
+                                       ApplyMIPCalib((*CEEHC)[i + 1]->GetCEESignals()),
+                                       ApplyMIPCalib((*CEEHC)[i + 2]->GetCEESignals()),
                                        fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
           continue;
         else {
@@ -174,8 +184,8 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
         }
       }
       else if (i < 27) {
-        if (!(SgnlHelper.IsInteraction((*CEEHC)[i]->GetCEESignals(),
-                                       (*CEEHC)[i + 1]->GetCEESignals(),
+        if (!(SgnlHelper.IsInteraction(ApplyMIPCalib((*CEEHC)[i]->GetCEESignals()),
+                                       ApplyMIPCalib((*CEEHC)[i + 1]->GetCEESignals()),
                                        fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
           continue;
         else {
