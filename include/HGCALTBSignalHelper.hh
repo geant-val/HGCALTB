@@ -27,8 +27,6 @@ class HGCALTBSignalHelper
     HGCALTBSignalHelper() = default;
     ~HGCALTBSignalHelper() = default;
 
-    // Get x and y (mm) of small Si cell from copy number
-    G4TwoVector GetSiCellPos(const G4int CpNo) const;
     // Get layer with nuclear interaction (using 3 layers)
     G4bool IsInteraction(const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer1,
                          const std::array<G4double, HGCALTBConstants::CEECells + 1> Layer2,
@@ -40,6 +38,8 @@ class HGCALTBSignalHelper
                          const G4double PrimaryEnergy) const;
 
   private:
+    // Get x and y (mm) of small Si cell from copy number
+    G4TwoVector GetSiCellPos(const G4int CpNo) const;
     // Return x-coordinate of small Si cell in mm from copy number
     G4double GetSiCellX(const G4int CpNo) const;
     // Return x-coordinate of small Si cell in mm from copy number
@@ -121,7 +121,7 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
 #  ifdef DEBUGHELPER
   G4cout << "PrimaryEnergy " << PrimaryEnergy << " Threshold "
          << ComputeLayerThreshold(PrimaryEnergy) << " SignalRadius 10 cm "
-         << ComputeSignalRadius(Layer1, 100) << G4endl;
+         << ComputeSignalRadius(Layer1, 100) << " MIP" << G4endl;
 #  endif
 
   if (ComputeSignalRadius(Layer1, 100) < ComputeLayerThreshold(PrimaryEnergy)) {
@@ -132,6 +132,10 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
                      + ComputeSignalRadius(Layer3, 20))
                     / (ComputeSignalRadius(Layer1, 100) + ComputeSignalRadius(Layer2, 100)
                        + ComputeSignalRadius(Layer3, 100));
+
+#  ifdef DEBUGHELPER
+  G4cout << "-->RLayer " << RLayer << G4endl;
+#  endif
 
   if (RLayer > 0.96) {
     return false;
@@ -149,7 +153,7 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
 #  ifdef DEBUGHELPER
   G4cout << "PrimaryEnergy " << PrimaryEnergy << " Threshold "
          << ComputeLayerThreshold(PrimaryEnergy) << " SignalRadius 10 cm "
-         << ComputeSignalRadius(Layer1, 100) << G4endl;
+         << ComputeSignalRadius(Layer1, 100) << " MIP" << G4endl;
 #  endif
 
   if (ComputeSignalRadius(Layer1, 100) < ComputeLayerThreshold(PrimaryEnergy)) {
@@ -158,6 +162,10 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
 
   G4double RLayer = (ComputeSignalRadius(Layer1, 20) + ComputeSignalRadius(Layer2, 20))
                     / (ComputeSignalRadius(Layer1, 100) + ComputeSignalRadius(Layer2, 100));
+
+#  ifdef DEBUGHELPER
+  G4cout << "-->RLayer " << RLayer << G4endl;
+#  endif
 
   if (RLayer > 0.96) {
     return false;
