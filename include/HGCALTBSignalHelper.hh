@@ -52,6 +52,8 @@ class HGCALTBSignalHelper
     // Get threshold for tagging pion nuclear interaction (from CMS paper)
     // goes from 12 to 40 MIPs, from 20 to 200 GeV pions
     G4int ComputeLayerThreshold(const G4double PrimaryEnergy) const;
+    // Calculate number of small Si cells above noise threshold (return true if >= 3)
+    G4bool ThreeCellThsld(const std::array<G4double, HGCALTBConstants::CEECells + 1> Signals) const;
 };
 
 inline G4double HGCALTBSignalHelper::GetSiCellX(const G4int CpNo) const
@@ -121,8 +123,13 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
 #  ifdef DEBUGHELPER
   G4cout << "PrimaryEnergy " << PrimaryEnergy << " Threshold "
          << ComputeLayerThreshold(PrimaryEnergy) << " SignalRadius 10 cm "
-         << ComputeSignalRadius(Layer1, 100) << " MIP" << G4endl;
+         << ComputeSignalRadius(Layer1, 100) << " MIP "
+         << "Is3CellAboveThreshold " << ThreeCellThsld(Layer1) << G4endl;
 #  endif
+
+  if (!ThreeCellThsld(Layer1)) {
+    return false;
+  }
 
   if (ComputeSignalRadius(Layer1, 100) < ComputeLayerThreshold(PrimaryEnergy)) {
     return false;
@@ -153,8 +160,13 @@ inline G4bool HGCALTBSignalHelper::IsInteraction(
 #  ifdef DEBUGHELPER
   G4cout << "PrimaryEnergy " << PrimaryEnergy << " Threshold "
          << ComputeLayerThreshold(PrimaryEnergy) << " SignalRadius 10 cm "
-         << ComputeSignalRadius(Layer1, 100) << " MIP" << G4endl;
+         << ComputeSignalRadius(Layer1, 100) << " MIP "
+         << "Is3CellAboveThreshold " << ThreeCellThsld(Layer1) << G4endl;
 #  endif
+
+  if (!ThreeCellThsld(Layer1)) {
+    return false;
+  }
 
   if (ComputeSignalRadius(Layer1, 100) < ComputeLayerThreshold(PrimaryEnergy)) {
     return false;
@@ -183,6 +195,16 @@ inline G4int HGCALTBSignalHelper::ComputeLayerThreshold(const G4double PrimaryEn
   auto Threshold = 12 + (Energy - 20) * (28 / 180);  // goes from 12 to 40 MIPs from 20 to 200 GeV
 
   return Threshold;
+}
+
+inline G4bool HGCALTBSignalHelper::ThreeCellThsld(
+  const std::array<G4double, HGCALTBConstants::CEECells + 1> Signals) const
+{
+  G4int counter{0};
+  for (const auto& Cell : Signals) {
+    if (Cell > HGCALTBConstants::CEEThreshold) counter++;
+  }
+  return (counter >= 3) ? true : false;
 }
 
 #endif  // HGCALTBSignalHelper_h 1
