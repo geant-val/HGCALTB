@@ -1,0 +1,19 @@
+/adept/setVecGeomGDML TBHGCal181Oct.gdml
+/adept/setVerbosity 0
+## Threshold for buffering tracks before sending to GPU
+/adept/setTransportBufferThreshold 2000
+## Total number of GPU track slots (not per thread)
+/adept/setMillionsOfTrackSlots 8
+/adept/setMillionsOfHitSlots 2
+
+/adept/setTrackInAllRegions true
+#/adept/addGPURegion HGCalRegion
+#/adept/addGPURegion HGCalAHcalRegion
+
+/process/em/verbose 0
+/process/had/verbose 0
+/run/initialize
+/run/printProgress 100
+/gun/particle pi-
+/gun/energy 10 GeV
+/run/beamOn 1000
