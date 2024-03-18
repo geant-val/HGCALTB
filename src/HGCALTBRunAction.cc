@@ -50,6 +50,7 @@ HGCALTBRunAction::HGCALTBRunAction(HGCALTBEventAction* eventAction, G4String fil
   analysisManager->CreateNtupleIColumn("PDGID");
   analysisManager->CreateNtupleDColumn("PrimaryEnergy");
   analysisManager->CreateNtupleIColumn("CEEIntLayer");
+  analysisManager->CreateNtupleIColumn("CHEIntLayer");
   analysisManager->CreateNtupleDColumn("CEESignals", fEventAction->GetCEESignals());
   analysisManager->CreateNtupleDColumn("CHESignals", fEventAction->GetCHESignals());
   analysisManager->CreateNtupleDColumn("AHCALSignals", fEventAction->GetAHCALSignals());

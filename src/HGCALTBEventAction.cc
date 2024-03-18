@@ -196,6 +196,21 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     }  // end of CEE pion interaction tagging
   }
 
+  // auxiliary lambda function that takes an std::array with signals in a CHE layer
+  // of 7 pads and returns an std::array with only elements for the central pad
+  auto ExtractCentralPad =
+    [](const std::array<G4double, HGCALTBConstants::CHECells + 1>& CHESignals) {
+      std::array<G4double, HGCALTBConstants::CEECells + 1> CentralPad = {0.};
+      std::copy(CHESignals.begin(), CHESignals.begin() + (HGCALTBConstants::CEECells + 1),
+                CentralPad.begin());
+      return CentralPad;
+    };
+
+  // CHE layer of pion interaction
+  G4int CHEIntLayer{99};
+  // CHE nuclear interaction found
+  G4bool CHENclInteraction{false};
+
   // CHE Hits
   //
   auto CHEHCID =
@@ -214,6 +229,34 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
                         0., ApplyHGCALCut);
     }
     fCHELayerSignals[i] = CHELayerSignal;
+
+    // Tag pion interaction layer in CHE
+    //
+    if (!CHENclInteraction) {  // pion has not interacted yet
+      if (i <= 10) {
+        if (!(SgnlHelper.IsInteraction(
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i]->GetCHESignals())),
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 1]->GetCHESignals())),
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 2]->GetCHESignals())),
+              fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CHENclInteraction = true;
+          CHEIntLayer = i;
+        }
+      }
+      else if (i < 12) {
+        if (!(SgnlHelper.IsInteraction(
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i]->GetCHESignals())),
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 1]->GetCHESignals())),
+              fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CHENclInteraction = true;
+          CHEIntLayer = i;
+        }
+      }
+    }  // end of CHE pion interaction tagging
   }
 
   // AHCAL Hits
@@ -258,6 +301,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     6, fPrimaryGenAction->GetParticleGun()->GetParticleDefinition()->GetPDGEncoding());
   analysisManager->FillNtupleDColumn(7, fPrimaryGenAction->GetParticleGun()->GetParticleEnergy());
   analysisManager->FillNtupleIColumn(8, CEEIntLayer);
+  analysisManager->FillNtupleIColumn(9, CHEIntLayer);
   analysisManager->AddNtupleRow();
 }
 
