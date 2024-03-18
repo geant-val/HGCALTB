@@ -233,7 +233,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
     // Tag pion interaction layer in CHE
     //
     if (!CHENclInteraction) {  // pion has not interacted yet
-      if (i <= 10) {
+      if (i <= 9) {
         if (!(SgnlHelper.IsInteraction(
               ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i]->GetCHESignals())),
               ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 1]->GetCHESignals())),
@@ -245,7 +245,7 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
           CHEIntLayer = i;
         }
       }
-      else if (i < 12) {
+      else if (i < 11) {
         if (!(SgnlHelper.IsInteraction(
               ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i]->GetCHESignals())),
               ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 1]->GetCHESignals())),
