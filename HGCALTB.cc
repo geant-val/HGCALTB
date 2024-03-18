@@ -27,6 +27,10 @@
 #include "G4Version.hh"
 #include "G4VisExecutive.hh"
 
+#ifdef USE_ADEPT
+#include "FTFP_BERT_AdePT.hh"
+#endif
+
 // CLI string outputs
 namespace CLIOutputs
 {
@@ -68,6 +72,9 @@ int main(int argc, char** argv)
 #ifdef G4MULTITHREADED
   G4int nThreads = G4Threading::G4GetNumberOfCores();
 #endif
+#ifdef USE_ADEPT
+  G4bool adept{false};
+#endif
 
   // CLI parsing
   for (G4int i = 1; i < argc; i = i + 2) {
@@ -82,6 +89,12 @@ int main(int argc, char** argv)
 #ifdef G4MULTITHREADED
     else if (G4String(argv[i]) == "-t") {
       nThreads = G4UIcommand::ConvertToInt(argv[i + 1]);
+    }
+#endif
+#ifdef USE_ADEPT
+    else if (G4String(argv[i]) == "--adept") {
+      adept = true;
+      i-=1;
     }
 #endif
     else if (G4String(argv[i]) == "-h") {
@@ -120,7 +133,15 @@ int main(int argc, char** argv)
     PrintPLFactoryUsageError::PLFactoryUsageError();
     return 1;
   }
-  auto physicsList = physListFactory->GetReferencePhysList(custom_pl);
+  G4VUserPhysicsList *physicsList;
+  #ifndef USE_ADEPT
+    physicsList = physListFactory->GetReferencePhysList(custom_pl);
+  #else
+    if(adept)
+      physicsList = new FTFP_BERT_AdePT();
+    else
+      physicsList = physListFactory->GetReferencePhysList(custom_pl);
+  #endif
   runManager->SetUserInitialization(physicsList);
 
   runManager->SetUserInitialization(new HGCALTBDetConstruction());
