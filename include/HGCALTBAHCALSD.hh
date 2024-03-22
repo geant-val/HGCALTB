@@ -45,6 +45,7 @@ class HGCALTBAHCALSD : public G4VSensitiveDetector
     HGCALTBAHCALHitsCollection* fHitsCollection;
     inline G4int MapTileCpNo(G4int cpno) const;
     inline G4double GetBirk(const G4Step* aStep) const;
+    inline G4double GetSimpleBirk(const G4Step* aStep) const;
 };
 
 inline G4double HGCALTBAHCALSD::GetBirk(const G4Step* const aStep) const
@@ -68,6 +69,16 @@ inline G4double HGCALTBAHCALSD::GetBirk(const G4Step* const aStep) const
     weight = 1. / (1. + rkb * dedx + c * dedx * dedx);
   }
 
+  return weight;
+}
+
+inline G4double HGCALTBAHCALSD::GetSimpleBirk(const G4Step* aStep) const
+{
+  const G4double kBirk = 0.126;  // mm/MeV
+  const auto edep = aStep->GetTotalEnergyDeposit();  // MeV
+  const auto stepl = aStep->GetStepLength();  // mm
+  G4double weight = 1. / (1. + kBirk * (edep / stepl));
+  if (weight > 1.) weight = 1.;
   return weight;
 }
 
