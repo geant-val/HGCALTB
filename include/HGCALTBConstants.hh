@@ -117,8 +117,8 @@ constexpr G4double AHCALNoiseSigma = 0.10;  // MIP
 
 // MIP calibration
 //
-constexpr G4double MIPSilicon = 0.085;  // MeV
-constexpr G4double MIPTile = 0.475;  // MeV
+constexpr G4double MIPSilicon = 0.08925;  // MeV
+constexpr G4double MIPTile = 0.49875;  // MeV
 
 }  // namespace HGCALTBConstants
 
