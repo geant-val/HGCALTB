@@ -137,23 +137,29 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
   tree->SetBranchAddress("CHESignals", &CHESignals);
   vector<double>* AHCALSignals = NULL;
   tree->SetBranchAddress("AHCALSignals", &AHCALSignals);
+  int CEEIntLayer{0};
+  tree->SetBranchAddress("CEEIntLayer", &CEEIntLayer);
+  int CHEIntLayer{0};
+  tree->SetBranchAddress("CHEIntLayer", &CHEIntLayer);
 
   const auto H1CEEname = ("H1CEE" + ene_name);
   const auto H1CHEname = ("H1CHE" + ene_name);
   const auto H1Totname = ("H1CTot" + ene_name);
-  TH1F H1CEE(H1CEEname.c_str(), H1CEEname.c_str(), 400, 0., ene * 2.);
-  TH1F H1CHE(H1CHEname.c_str(), H1CHEname.c_str(), 400, 0., ene * 2.);
-  TH1F H1TOT(H1Totname.c_str(), H1Totname.c_str(), 400, 0., ene * 2.);
+  TH1F H1CEE(H1CEEname.c_str(), H1CEEname.c_str(), 100, 0., ene * 2.);
+  TH1F H1CHE(H1CHEname.c_str(), H1CHEname.c_str(), 100, 0., ene * 2.);
+  TH1F H1TOT(H1Totname.c_str(), H1Totname.c_str(), 100, 0., ene * 2.);
 
   bool CEEInteracted = false;
 
   for (std::size_t evtNo = 0; evtNo < tree->GetEntries(); evtNo++) {
     tree->GetEntry(evtNo);
-    if (HGCALTot < 300.) continue;  // <300 MIP, not interacting event
+    if (CEEIntLayer < 2) continue;  // cut pion events interacting first 2 CEE layers
+    if (CEETot < 100 && CHETot < 60) continue;  // cut non interacting event (described in TB paper)
+    if (CEEIntLayer == 99 && CHEIntLayer == 99) continue;  // interacting layer not found
+
     auto piene = recene(CEETot, CHETot, AHCALTot) / 1000;  // GeV
 
-    if (CEETot > 500.) CEEInteracted = true;
-    // if (IntLayer==1) CEEInteracted = true;
+    if (CEEIntLayer < 99) CEEInteracted = true;
 
     if (CEEInteracted)
       H1CEE.Fill(piene);
@@ -166,8 +172,25 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
 
   TFile* outputfile(TFile::Open("HGCALTBpiene.root", "UPDATE"));
   outputfile->cd();
-  H1CEE.Fit("gaus", "Q");
-  H1CHE.Fit("gaus", "Q");
+
+  // Fitting CEE histogram
+  auto tf1_CEE_gaus = TF1("tf1_CEE_gaus", "gaus");
+  auto CEEMax = H1CEE.GetXaxis()->GetBinCenter(H1CEE.GetMaximumBin());
+  auto CEEMinLimit = CEEMax - 1.2 * H1CEE.GetStdDev();
+  auto CEEMaxLimit = CEEMax + 1.2 * H1CEE.GetStdDev();
+  tf1_CEE_gaus.SetParameter(1, CEEMax);
+  tf1_CEE_gaus.SetRange(CEEMinLimit, CEEMaxLimit);
+  H1CEE.Fit(&tf1_CEE_gaus, "RQ");
+
+  // Fitting CHE histogram
+  auto tf1_CHE_gaus = TF1("tf1_CHE_gaus", "gaus");
+  auto CHEMax = H1CHE.GetXaxis()->GetBinCenter(H1CHE.GetMaximumBin());
+  auto CHEMinLimit = CHEMax - 1.2 * H1CHE.GetStdDev();
+  auto CHEMaxLimit = CHEMax + 1.2 * H1CHE.GetStdDev();
+  tf1_CHE_gaus.SetParameter(1, CHEMax);
+  tf1_CHE_gaus.SetRange(CHEMinLimit, CHEMaxLimit);
+  H1CHE.Fit(&tf1_CHE_gaus, "RQ");
+
   if (Write) {
     H1CEE.Write();
     H1CHE.Write();
@@ -175,10 +198,10 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write,
   }
   outputfile->Close();
 
-  auto H1CEEAvg = H1CEE.GetFunction("gaus")->GetParameter(1);
-  auto H1CEESigma = H1CEE.GetFunction("gaus")->GetParameter(2);
-  auto H1CHEAvg = H1CHE.GetFunction("gaus")->GetParameter(1);
-  auto H1CHESigma = H1CHE.GetFunction("gaus")->GetParameter(2);
+  auto H1CEEAvg = H1CEE.GetFunction("tf1_CEE_gaus")->GetParameter(1);
+  auto H1CEESigma = H1CEE.GetFunction("tf1_CEE_gaus")->GetParameter(2);
+  auto H1CHEAvg = H1CHE.GetFunction("tf1_CHE_gaus")->GetParameter(1);
+  auto H1CHESigma = H1CHE.GetFunction("tf1_CHE_gaus")->GetParameter(2);
   AnalysisOutput out{H1CEEAvg, H1CEESigma, H1CHEAvg, H1CHESigma};
 
   return out;
