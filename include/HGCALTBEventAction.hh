@@ -24,10 +24,12 @@
 #  include "HGCALTBCEEHit.hh"
 #  include "HGCALTBCHEHit.hh"
 #  include "HGCALTBConstants.hh"
+#  include "HGCALTBPrimaryGenAction.hh"
 
 class HGCALTBEventAction : public G4UserEventAction
 {
   public:
+    HGCALTBEventAction(HGCALTBPrimaryGenAction* PGA);
     HGCALTBEventAction();
     virtual ~HGCALTBEventAction();
 
@@ -50,6 +52,7 @@ class HGCALTBEventAction : public G4UserEventAction
     std::vector<G4double> fCEELayerSignals;  // signals per CEE layer
     std::vector<G4double> fCHELayerSignals;  // signals per CHE layer
     std::vector<G4double> fAHCALLayerSignals;  // signals per AHCAL layer
+    HGCALTBPrimaryGenAction* fPrimaryGenAction;
 };
 
 inline void HGCALTBEventAction::Addedep(G4double stepedep)

@@ -45,8 +45,10 @@ G4VPhysicalVolume* HGCALTBDetConstruction::Construct()
   Parser.Read("TBHGCal181Oct.gdml", false);
   auto worldPV = Parser.GetWorldVolume();
 
-#ifdef CHECKOVERLAPS
+#if G4VERSION_NUMBER > 1100
+#  ifdef CHECKOVERLAPS
   CheckOverlaps(worldPV);
+#  endif
 #endif
 
   DefineVisAttributes();
@@ -75,7 +77,15 @@ void HGCALTBDetConstruction::ConstructSDandField()
       G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CEESD);
     }
+    if (volume->GetName() == "HGCalEECellCoarseHalf") {
+      G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CEESD);
+    }
     if (volume->GetName() == "HGCalHECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CHESD);
+    }
+    if (volume->GetName() == "HGCalHECellCoarseHalf") {
       G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CHESD);
     }
@@ -163,6 +173,7 @@ void HGCALTBDetConstruction::DefineVisAttributes()
 
 // CheckOverlaps() private method
 //
+#if G4VERSION_NUMBER > 1100
 void HGCALTBDetConstruction::CheckOverlaps(G4VPhysicalVolume* PhysVol)
 {
   G4cout << "-->CheckingOverlaps for volumes in " << PhysVol->GetName() << G4endl;
@@ -170,5 +181,6 @@ void HGCALTBDetConstruction::CheckOverlaps(G4VPhysicalVolume* PhysVol)
   G4GeomTestVolume* testVolume = new G4GeomTestVolume(PhysVol, 0.0, 100000, true);
   testVolume->TestOverlapInTree();
 }
+#endif
 
 //**************************************************

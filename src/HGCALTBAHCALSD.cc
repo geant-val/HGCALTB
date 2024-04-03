@@ -82,7 +82,8 @@ G4bool HGCALTBAHCALSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   auto charge = aStep->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGCharge();
   auto edep = aStep->GetTotalEnergyDeposit();
   if (stepl > 0. && charge != 0) {
-    edep *= GetBirk(aStep);
+    edep *= GetBirk(aStep);  // CMS Birk treatment
+    // edep *= GetSimpleBirk(aStep); // simplified Birk treatment
   }
   hit->AddTileEdep(TileID, edep);
 

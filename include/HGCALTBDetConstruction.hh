@@ -13,6 +13,7 @@
 // Includers from Geant4
 //
 #  include "G4VUserDetectorConstruction.hh"
+#  include "G4Version.hh"
 
 class HGCALTBDetConstruction : public G4VUserDetectorConstruction
 {
@@ -26,7 +27,9 @@ class HGCALTBDetConstruction : public G4VUserDetectorConstruction
 
   private:
     void DefineVisAttributes();
+#  if G4VERSION_NUMBER > 1100
     void CheckOverlaps(G4VPhysicalVolume* PhysVol);
+#  endif
 };
 
 #endif  // HGCALTBDetConstruction_h

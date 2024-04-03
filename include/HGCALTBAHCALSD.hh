@@ -45,6 +45,7 @@ class HGCALTBAHCALSD : public G4VSensitiveDetector
     HGCALTBAHCALHitsCollection* fHitsCollection;
     inline G4int MapTileCpNo(G4int cpno) const;
     inline G4double GetBirk(const G4Step* aStep) const;
+    inline G4double GetSimpleBirk(const G4Step* aStep) const;
 };
 
 inline G4double HGCALTBAHCALSD::GetBirk(const G4Step* const aStep) const
@@ -53,12 +54,16 @@ inline G4double HGCALTBAHCALSD::GetBirk(const G4Step* const aStep) const
   double weight = 1.;
   double charge = aStep->GetPreStepPoint()->GetCharge();
   double length = aStep->GetStepLength();
-  double birk1 = 0.0052;
+  // Brik constants and unit from CMSSW
+  // https://github.com/cms-sw/cmssw/blob/master/SimG4CMS/Calo/src/HCalSD.cc#L82C2-L82C57
+  double bunit = (CLHEP::g / (CLHEP::MeV * CLHEP::cm2));
+  double birk1 = 0.0052 * bunit;  // Vladimir says birk1 was increased to 0.06 (15% up)
+                                  // but not for HGCAL yet
   double birk2 = 0.142;
   double birk3 = 1.75;
 
   if (charge != 0. && length > 0.) {
-    double density = aStep->GetPreStepPoint()->GetMaterial()->GetDensity() / (g / cm3);
+    double density = aStep->GetPreStepPoint()->GetMaterial()->GetDensity();
     double dedx = aStep->GetTotalEnergyDeposit() / length;
     double rkb = birk1 / density;
     double c = birk2 * rkb * rkb;
@@ -68,6 +73,16 @@ inline G4double HGCALTBAHCALSD::GetBirk(const G4Step* const aStep) const
     weight = 1. / (1. + rkb * dedx + c * dedx * dedx);
   }
 
+  return weight;
+}
+
+inline G4double HGCALTBAHCALSD::GetSimpleBirk(const G4Step* aStep) const
+{
+  const G4double kBirk = 0.126;  // mm/MeV
+  const auto edep = aStep->GetTotalEnergyDeposit();  // MeV
+  const auto stepl = aStep->GetStepLength();  // mm
+  G4double weight = 1. / (1. + kBirk * (edep / stepl));
+  if (weight > 1.) weight = 1.;
   return weight;
 }
 
