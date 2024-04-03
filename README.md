@@ -56,7 +56,7 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
 ### Available datasets and analyses
 | Dataset | Geant4 | HGCALTB | Comment |
 | :---:   | :---:  | :---:   | :---:   |
-| 1.0_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 1.0 | Produced with geant-val, replaces all previous results on geant-val. Data for G4 10.4 and 10.5 were produced with 15k reduced statistics due to a problem in the output file for higher samples (likely a bug in g4analysis fixed in new versions). |
+| 1.0_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 1.0 | Produced with geant-val, replaces all previous results on geant-val. Data for G4 10.4 and 10.5 were produced with 15k reduced statistics due to a problem in the output file for higher samples (likely a bug in g4analysis fixed in new versions). Added to geant-val on 3/4/2024.|
 | 0.2_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 0.2 | Produced with geant-val, replaces all previous results on geant-val. Used for presentation on 16/2/2024. Removed from geant-val on 3/4/2024.|
 | 0.1_1 | G4-11.2 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL | 0.1 | Produced with geant-val for presentation on 23/1/2024. Removed from geant-val on 4/2/2024. |
 
