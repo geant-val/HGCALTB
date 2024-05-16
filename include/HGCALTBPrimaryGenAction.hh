@@ -29,9 +29,17 @@ class HGCALTBPrimaryGenAction : public G4VUserPrimaryGeneratorAction
     // virtual method from base class
     virtual void GeneratePrimaries(G4Event* event);
 
+    // get particle gun
+    const G4ParticleGun* GetParticleGun() const;
+
   private:
     G4ParticleGun* fParticleGun;
 };
+
+inline const G4ParticleGun* HGCALTBPrimaryGenAction::GetParticleGun() const
+{
+  return fParticleGun;
+}
 
 #endif  // HGCALTBPrimaryGenAction_h
 

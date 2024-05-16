@@ -47,7 +47,7 @@ void HGCALTBActInitialization::Build() const
 #endif
 
   auto PrimaryGenAction = new HGCALTBPrimaryGenAction();
-  auto EventAction = new HGCALTBEventAction();
+  auto EventAction = new HGCALTBEventAction(PrimaryGenAction);
   SetUserAction(PrimaryGenAction);
   SetUserAction(new HGCALTBStepAction(EventAction));
   SetUserAction(new HGCALTBRunAction(EventAction, fFileName));

@@ -15,6 +15,7 @@
 #include "HGCALTBCEESD.hh"
 #include "HGCALTBCHESD.hh"
 #include "HGCALTBRunAction.hh"
+#include "HGCALTBSignalHelper.hh"
 
 // Includers from Geant4
 //
@@ -27,6 +28,7 @@
 #else
 #  include "G4AnalysisManager.hh"
 #endif
+#include "G4ParticleGun.hh"
 #include "G4SDManager.hh"
 #ifdef USE_CELERITAS
 #include "Celeritas.hh"
@@ -38,6 +40,14 @@
 
 // constructor and de-constructor
 //
+HGCALTBEventAction::HGCALTBEventAction(HGCALTBPrimaryGenAction* PGA)
+  : G4UserEventAction(), edep(0.), fIntLayer(0), fPrimaryGenAction(PGA)
+{
+  fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
+  fCHELayerSignals = std::vector<G4double>(HGCALTBConstants::CHELayers, 0.);
+  fAHCALLayerSignals = std::vector<G4double>(HGCALTBConstants::AHCALLayers, 0.);
+}
+
 HGCALTBEventAction::HGCALTBEventAction() : G4UserEventAction(), edep(0.), fIntLayer(0)
 {
   fCEELayerSignals = std::vector<G4double>(HGCALTBConstants::CEELayers, 0.);
@@ -148,12 +158,70 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
       return partialsum;
   };
 
+  // auxiliary lambda function that takes an std::array of signals in big Si wafer
+  // and returns a same-sized std::array with entries calibrated at MIP scale
+  auto ApplyMIPCalib = [](const std::array<G4double, HGCALTBConstants::CEECells + 1>& Signals) {
+    std::array<G4double, HGCALTBConstants::CEECells + 1> CalibSignals = {0.};
+    for (std::size_t i = 0; i < CalibSignals.size(); i++) {
+      CalibSignals[i] = Signals[i] / HGCALTBConstants::MIPSilicon;
+    }
+    return CalibSignals;
+  };
+
+  // Signal helper class
+  HGCALTBSignalHelper SgnlHelper;
+  // CEE layer of pion interaction
+  G4int CEEIntLayer{99};
+  // CEE nuclear interaction found
+  G4bool CEENclInteraction{false};
+
   for (std::size_t i = 0; i < HGCALTBConstants::CEELayers; i++) {
     auto CEESignals = (*CEEHC)[i]->GetCEESignals();
     G4double CEELayerSignal =
       std::accumulate(CEESignals.begin(), CEESignals.end(), 0., ApplyHGCALCut);
     fCEELayerSignals[i] = CEELayerSignal;
+
+    // Tag pion interaction layer in CEE
+    //
+    if (!CEENclInteraction) {  // pion has not interacted yet
+      if (i <= 25) {
+        if (!(SgnlHelper.IsInteraction(ApplyMIPCalib((*CEEHC)[i]->GetCEESignals()),
+                                       ApplyMIPCalib((*CEEHC)[i + 1]->GetCEESignals()),
+                                       ApplyMIPCalib((*CEEHC)[i + 2]->GetCEESignals()),
+                                       fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CEENclInteraction = true;
+          CEEIntLayer = i;
+        }
+      }
+      else if (i < 27) {
+        if (!(SgnlHelper.IsInteraction(ApplyMIPCalib((*CEEHC)[i]->GetCEESignals()),
+                                       ApplyMIPCalib((*CEEHC)[i + 1]->GetCEESignals()),
+                                       fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CEENclInteraction = true;
+          CEEIntLayer = i;
+        }
+      }
+    }  // end of CEE pion interaction tagging
   }
+
+  // auxiliary lambda function that takes an std::array with signals in a CHE layer
+  // of 7 pads and returns an std::array with only elements for the central pad
+  auto ExtractCentralPad =
+    [](const std::array<G4double, HGCALTBConstants::CHECells + 1>& CHESignals) {
+      std::array<G4double, HGCALTBConstants::CEECells + 1> CentralPad = {0.};
+      std::copy(CHESignals.begin(), CHESignals.begin() + (HGCALTBConstants::CEECells + 1),
+                CentralPad.begin());
+      return CentralPad;
+    };
+
+  // CHE layer of pion interaction
+  G4int CHEIntLayer{99};
+  // CHE nuclear interaction found
+  G4bool CHENclInteraction{false};
 
   // CHE Hits
   //
@@ -173,6 +241,34 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
                         0., ApplyHGCALCut);
     }
     fCHELayerSignals[i] = CHELayerSignal;
+
+    // Tag pion interaction layer in CHE
+    //
+    if (!CHENclInteraction) {  // pion has not interacted yet
+      if (i <= 9) {
+        if (!(SgnlHelper.IsInteraction(
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i]->GetCHESignals())),
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 1]->GetCHESignals())),
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 2]->GetCHESignals())),
+              fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CHENclInteraction = true;
+          CHEIntLayer = i;
+        }
+      }
+      else if (i < 11) {
+        if (!(SgnlHelper.IsInteraction(
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i]->GetCHESignals())),
+              ApplyMIPCalib(ExtractCentralPad((*CHEHC)[i + 1]->GetCHESignals())),
+              fPrimaryGenAction->GetParticleGun()->GetParticleEnergy())))
+          continue;
+        else {
+          CHENclInteraction = true;
+          CHEIntLayer = i;
+        }
+      }
+    }  // end of CHE pion interaction tagging
   }
 
   // AHCAL Hits
@@ -213,6 +309,11 @@ void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
   analysisManager->FillNtupleDColumn(3, AHCALTot);
   analysisManager->FillNtupleDColumn(4, HGCALTot);
   analysisManager->FillNtupleIColumn(5, fIntLayer);
+  analysisManager->FillNtupleIColumn(
+    6, fPrimaryGenAction->GetParticleGun()->GetParticleDefinition()->GetPDGEncoding());
+  analysisManager->FillNtupleDColumn(7, fPrimaryGenAction->GetParticleGun()->GetParticleEnergy());
+  analysisManager->FillNtupleIColumn(8, CEEIntLayer);
+  analysisManager->FillNtupleIColumn(9, CHEIntLayer);
   analysisManager->AddNtupleRow();
 }
 

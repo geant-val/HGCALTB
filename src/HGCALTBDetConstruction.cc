@@ -18,6 +18,7 @@
 // Includers from Geant4
 //
 #include "G4GDMLParser.hh"
+#include "G4GeomTestVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4SDManager.hh"
@@ -26,6 +27,9 @@
 // Includers from std
 //
 #include <string>
+
+// Preprocessor macros
+// #define CHECKOVERLAPS
 
 // Constructors and de-constructor
 //
@@ -40,6 +44,12 @@ G4VPhysicalVolume* HGCALTBDetConstruction::Construct()
   G4GDMLParser Parser;
   Parser.Read("TBHGCal181Oct.gdml", false);
   auto worldPV = Parser.GetWorldVolume();
+
+#if G4VERSION_NUMBER > 1100
+#  ifdef CHECKOVERLAPS
+  CheckOverlaps(worldPV);
+#  endif
+#endif
 
   DefineVisAttributes();
 
@@ -67,7 +77,15 @@ void HGCALTBDetConstruction::ConstructSDandField()
       G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CEESD);
     }
+    if (volume->GetName() == "HGCalEECellCoarseHalf") {
+      G4cout << "--->Assigning HGCALTBCEESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CEESD);
+    }
     if (volume->GetName() == "HGCalHECellCoarse") {
+      G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
+      volume->SetSensitiveDetector(CHESD);
+    }
+    if (volume->GetName() == "HGCalHECellCoarseHalf") {
       G4cout << "--->Assigning HGCALTBCHESD to logical volume " << volume->GetName() << G4endl;
       volume->SetSensitiveDetector(CHESD);
     }
@@ -147,10 +165,22 @@ void HGCALTBDetConstruction::DefineVisAttributes()
       volume->SetVisAttributes(G4VisAttributes::GetInvisible());
     if (isSubstring(volume->GetName(), "HGCalHESiliconSensitive"))
       volume->SetVisAttributes(SiWaferVisAttr);
-    // che
+    // ahcal
     if (volume->GetName() == "HGCalAH") volume->SetVisAttributes(G4VisAttributes::GetInvisible());
     if (isSubstring(volume->GetName(), "AHcalTileSensitive")) volume->SetVisAttributes(TileVisAttr);
   }
 }
+
+// CheckOverlaps() private method
+//
+#if G4VERSION_NUMBER > 1100
+void HGCALTBDetConstruction::CheckOverlaps(G4VPhysicalVolume* PhysVol)
+{
+  G4cout << "-->CheckingOverlaps for volumes in " << PhysVol->GetName() << G4endl;
+  // volume, tolerance, npoints, verbosity
+  G4GeomTestVolume* testVolume = new G4GeomTestVolume(PhysVol, 0.0, 100000, true);
+  testVolume->TestOverlapInTree();
+}
+#endif
 
 //**************************************************

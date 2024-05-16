@@ -38,7 +38,7 @@ A Geant4 simulation of the 2018 CMS HGCAL test-beam for geant-val.
 ## Project description
 The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test beam](https://arxiv.org/abs/2211.04740) to perform Geant4 regression testing, physics lists comparison and validation against test-beam data with geant-val.
 - ⏰ Start date: 11 January 2024
-- 📌 Status: development
+- 📌 Status: data from v1.0 on are used for Geant4 validation
 
 <!--Authors and contacts-->
 ## Authors and contacts
@@ -50,14 +50,17 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
 ## Results
 
 ### Selected reports and presentations
+- [End of Fellowship Report](https://indico.cern.ch/event/1395384/contributions/5865083/attachments/2841640/4967534/lopezzot_epsft_22_4_2024.pdf), CERN EP-SFT Group Meeting, 22 April 2024
+- [Testing Geant4 on the CMS HGCAL test beam](https://indico.cern.ch/event/1401201/contributions/5896696/attachments/2833174/4950405/lopezzot_9_4_2024.pdf), Geant4 simulation bi-weekly meeting, 9 April 2024
 - [Preliminary results of the CMS HGCAL test-beam simulation within Geant-val](https://indico.cern.ch/event/1383280/), CMS Simulation Meeting, 16 February 2024 (CMS restricted)
 - [Towards a Geant4 CMS HGCAL validation test](https://indico.cern.ch/event/1370020/contributions/5771288/attachments/2785706/4856878/lopezzot_23_1_2024.pdf), Geant4 simulation bi-weekly meeting, 23 January 2024
 
 ### Available datasets and analyses
 | Dataset | Geant4 | HGCALTB | Comment |
 | :---:   | :---:  | :---:   | :---:   |
-| 0.2_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 0.2 | Produced with geant-val, replaces all previous results on geant-val. Used for presentation on 16/2/2024. |
-| 0.1_1 | G4-11.2 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL | 0.1 | Produced with geant-val for presentation on 23/1/2024. Removed from geant-val on 4/2/2023. |
+| 1.0_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 1.0 | Produced with geant-val, replaces all previous results on geant-val. Data for G4 10.4 and 10.5 were produced with 15k reduced statistics due to a problem in the output file for higher samples (likely a bug in g4analysis fixed in new versions). Added to geant-val on 3/4/2024. Used for presentation on 9/4/2024.|
+| 0.2_1 | G4 11.2, 11.1.p01, 11.0.p02, 10.7.p03, 10.6.p03, 10.5.p01, 10.4.p03 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL, FTFP_BERT_EMZ | 0.2 | Produced with geant-val, replaces all previous results on geant-val. Used for presentation on 16/2/2024. Removed from geant-val on 3/4/2024.|
+| 0.1_1 | G4-11.2 <br> FTFP_BERT, QGSP_BERT, FTFP_BERT_ATL | 0.1 | Produced with geant-val for presentation on 23/1/2024. Removed from geant-val on 4/2/2024. |
 
 <!--How to-->
 ## How to
