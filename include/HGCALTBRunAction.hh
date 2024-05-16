@@ -14,6 +14,7 @@
 // Includers from Geant4
 //
 #  include "G4UserRunAction.hh"
+#  include "G4Timer.hh"
 #  include "globals.hh"
 
 // Includers from project files
@@ -34,6 +35,9 @@ class HGCALTBRunAction : public G4UserRunAction
   private:
     HGCALTBEventAction* fEventAction;
     G4String fFileName;
+#ifdef USE_ADEPT
+    G4Timer fTimer;
+#endif
 };
 
 #endif  // HGCALTBRunAction_h 1

@@ -1,0 +1,42 @@
+# Temporary workaround since we don't have a G4 to VecGeom converter
+/adept/setVecGeomGDML TBHGCal181Oct.gdml
+/adept/setVerbosity 0
+## Threshold for buffering tracks before sending to GPU
+/adept/setTransportBufferThreshold 2000
+## Total number of GPU track slots (not per thread)
+/adept/setMillionsOfTrackSlots 8
+/adept/setMillionsOfHitSlots 2
+
+/adept/setTrackInAllRegions true
+#/adept/addGPURegion HGCalRegion
+#/adept/addGPURegion HGCalAHcalRegion
+
+/process/em/verbose 0
+/process/had/verbose 0
+/run/initialize
+/run/printProgress 100
+/gun/particle pi-
+# Run0
+/gun/energy 20 GeV
+/run/beamOn 10000
+# Run1
+/gun/energy 50 GeV
+/run/beamOn 10000
+# Run2
+/gun/energy 80 GeV
+/run/beamOn 10000
+# Run3
+/gun/energy 100 GeV
+/run/beamOn 10000
+# Run4
+/gun/energy 120 GeV
+/run/beamOn 10000
+# Run5
+/gun/energy 200 GeV
+/run/beamOn 10000
+# Run6
+/gun/energy 250 GeV
+/run/beamOn 10000
+# Run7
+/gun/energy 300 GeV
+/run/beamOn 10000
