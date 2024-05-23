@@ -30,6 +30,9 @@
 #endif
 #include "G4ParticleGun.hh"
 #include "G4SDManager.hh"
+#ifdef USE_CELERITAS
+#include "Celeritas.hh"
+#endif
 
 // Includers from std
 //
@@ -56,7 +59,7 @@ HGCALTBEventAction::~HGCALTBEventAction() {}
 
 // Define BeginOfEventAction() and EndOfEventAction() virtual methods
 //
-void HGCALTBEventAction::BeginOfEventAction(const G4Event*)
+void HGCALTBEventAction::BeginOfEventAction(const G4Event* event)
 {
   // Initialize variables per event
   //
@@ -71,6 +74,11 @@ void HGCALTBEventAction::BeginOfEventAction(const G4Event*)
   for (auto& value : fAHCALLayerSignals) {
     value = 0.;
   }
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().BeginOfEventAction(event);
+#else
+  (void)sizeof(event);
+#endif
 }
 
 // GetCEEHitsCollection method()
@@ -126,6 +134,10 @@ HGCALTBAHCALHitsCollection* HGCALTBEventAction::GetAHCALHitsCollection(G4int hcI
 
 void HGCALTBEventAction::EndOfEventAction(const G4Event* event)
 {
+#ifdef USE_CELERITAS
+  CelerSimpleOffload().EndOfEventAction(event);
+#endif
+
   // Access Event random seeds
   //
   // auto rndseed = G4RunManager::GetRunManager()->GetRandomNumberStatusForThisEvent();

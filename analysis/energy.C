@@ -30,8 +30,8 @@ AnalysisOutput DoAnalysis(const int RunNo, const double ene, const bool Write, c
 void energy(const string path = "")
 {
   // beam energies
-  const int runs = 8;
-  const std::array<double, runs> energies{20., 50., 80., 100., 120., 200., 250., 300.};
+  const int runs = 1;
+  const std::array<double, runs> energies{200};
 
   // re-create output file
   TFile* file(TFile::Open("HGCALTBpiene.root", "RECREATE"));

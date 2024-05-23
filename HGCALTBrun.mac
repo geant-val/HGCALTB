@@ -3,5 +3,5 @@
 /run/initialize
 /run/printProgress 1
 /gun/particle pi-
-/gun/energy 10 GeV
+/gun/energy 200 GeV
 /run/beamOn 1000
