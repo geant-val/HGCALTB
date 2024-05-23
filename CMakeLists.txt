@@ -30,8 +30,8 @@ endif()
 option(WITH_CELERITAS "Build with Celeritas support" OFF)
 if(WITH_CELERITAS)
   find_package(Celeritas 0.4.1 REQUIRED)
-  if(NOT CELERITAS_USE_Geant4 OR CELERITAS_CORE_GEO STREQUAL "ORANGE")
-    message(SEND_ERROR "This example requires Geant4 and VecGeom support "
+  if(NOT CELERITAS_USE_Geant4)
+    message(SEND_ERROR "This example requires Geant4 support "
       "to be enabled in Celeritas")
   endif()
   include(CeleritasLibrary)
