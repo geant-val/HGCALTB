@@ -50,6 +50,7 @@ The project targets a standalone Geant4 simulation of the [2018 CMS HGCAL test b
 ## Results
 
 ### Selected reports and presentations
+- [Validating Geant4 against calorimeters beam tests](https://indico.cern.ch/event/1339557/contributions/5898513/attachments/2860143/5004975/lopezzot_CALOR2024.pdf), CALOR2024, 22 May 2024 
 - [End of Fellowship Report](https://indico.cern.ch/event/1395384/contributions/5865083/attachments/2841640/4967534/lopezzot_epsft_22_4_2024.pdf), CERN EP-SFT Group Meeting, 22 April 2024
 - [Testing Geant4 on the CMS HGCAL test beam](https://indico.cern.ch/event/1401201/contributions/5896696/attachments/2833174/4950405/lopezzot_9_4_2024.pdf), Geant4 simulation bi-weekly meeting, 9 April 2024
 - [Preliminary results of the CMS HGCAL test-beam simulation within Geant-val](https://indico.cern.ch/event/1383280/), CMS Simulation Meeting, 16 February 2024 (CMS restricted)
