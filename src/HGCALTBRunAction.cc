@@ -86,10 +86,23 @@ void HGCALTBRunAction::BeginOfRunAction(const G4Run* Run)
   }
 
   analysisManager->OpenFile(outputfile);
+
+  // If using AdePT we may be interested in comparing the execution time
+#ifdef USE_ADEPT
+  fTimer.Start();
+#endif
 }
 
 void HGCALTBRunAction::EndOfRunAction(const G4Run*)
 {
+#ifdef USE_ADEPT
+  if(G4Threading::G4GetThreadId() < 0)
+  {
+    fTimer.Stop();
+    G4cout << "Run time: " << fTimer.GetRealElapsed() << "\n";
+  }
+#endif
+
   auto analysisManager = G4AnalysisManager::Instance();
 
   analysisManager->Write();

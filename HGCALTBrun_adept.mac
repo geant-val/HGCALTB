@@ -1,0 +1,21 @@
+/adept/setVecGeomGDML TBHGCal181Oct.gdml
+/adept/setVerbosity 0
+## Threshold for buffering tracks before sending to GPU
+/adept/setTransportBufferThreshold 2000
+## These numbers determine the amount of memory allocated in the GPU for 
+## track and hit buffers. They should be adjusted according to the number of CPU 
+## threads we want to run, and the memory available in the device
+/adept/setMillionsOfTrackSlots 4
+/adept/setMillionsOfHitSlots 1
+
+/adept/setTrackInAllRegions true
+#/adept/addGPURegion HGCalRegion
+#/adept/addGPURegion HGCalAHcalRegion
+
+/process/em/verbose 0
+/process/had/verbose 0
+/run/initialize
+/run/printProgress 100
+/gun/particle pi-
+/gun/energy 10 GeV
+/run/beamOn 1000
